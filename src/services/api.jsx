@@ -24,6 +24,14 @@ export const adminApi = createApi({
         body: data,
       }),
     }),
+    // delete product
+    deleteProduct: builder.mutation({
+      query: (id) => ({
+        url: "product/remove",
+        method: "DELETE",
+        body: id,
+      }),
+    }),
     // login customer
     loginAdmin: builder.mutation({
       query: (data) => ({
@@ -48,6 +56,7 @@ export const {
   useGetProductQuery,
   useGetCategoryQuery,
   useLoginAdminMutation,
+  useDeleteProductMutation,
   useAddProductMutation,
   useCreateAdminMutation,
 } = adminApi;

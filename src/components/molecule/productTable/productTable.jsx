@@ -6,16 +6,15 @@ import {
   Typography,
   Button,
   CardBody,
-  CardFooter,
   IconButton,
   Tooltip,
   Input,
   Avatar,
 } from "@material-tailwind/react";
-import { useGetProductQuery } from "../../../services/api";
+import { useGetProductQuery, useDeleteProductMutation } from "../../../services/api";
 import { DialogWithForm } from "../dialogs/addProductDialog";
 import { useState } from "react";
-
+import Pagination from "../pagination/pagination";
 const TABLE_HEAD = [
   "Name",
   "Price",
@@ -35,7 +34,9 @@ export function ProductTable() {
     isSuccess,
     isError,
     error,
+    refetch,
   } = useGetProductQuery();
+  const [deleteProductMutation] = useDeleteProductMutation();
   // console.log(product, isLoading, isSuccess, isError, error)
 
   if (isLoading) {
@@ -46,7 +47,18 @@ export function ProductTable() {
     console.error(error);
   }
   const handleOpen = () => setOpen((cur) => !cur);
-
+  const handleDelete = async (_id) => {
+    const postData = { id: _id };
+  
+    try {
+      await deleteProductMutation(postData);
+  
+      // Trigger a refetch after successful deletion
+      refetch();
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
   return (
     <Card className="h-full w-[96%] mx-auto">
       <DialogWithForm open={open} handleOpen={handleOpen} />
@@ -93,6 +105,7 @@ export function ProductTable() {
             {product.map(
               (
                 {
+                  _id,
                   product_cat,
                   product_image,
                   product_price,
@@ -186,7 +199,7 @@ export function ProductTable() {
                         </IconButton>
                       </Tooltip>
                       <Tooltip content="Delete product">
-                        <IconButton variant="text">
+                        <IconButton variant="text" onClick={() => handleDelete(_id)}>
                           <TrashIcon className="h-4 w-4 text-red-900" />
                         </IconButton>
                       </Tooltip>
@@ -198,37 +211,7 @@ export function ProductTable() {
           </tbody>
         </table>
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button variant="outlined" size="sm">
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          <IconButton variant="outlined" size="sm">
-            1
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            2
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            3
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            ...
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            8
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            9
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            10
-          </IconButton>
-        </div>
-        <Button variant="outlined" size="sm">
-          Next
-        </Button>
-      </CardFooter>
+      <Pagination />
     </Card>
   );
 }
