@@ -1,8 +1,5 @@
 import { PencilIcon, PlusIcon } from "@heroicons/react/24/solid";
-import {
-  MagnifyingGlassIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
   Card,
   CardHeader,
@@ -16,7 +13,8 @@ import {
   Avatar,
 } from "@material-tailwind/react";
 import { useGetProductQuery } from "../../../services/api";
-
+import { DialogWithForm } from "../dialogs/addProductDialog";
+import { useState } from "react";
 
 const TABLE_HEAD = [
   "Name",
@@ -28,21 +26,30 @@ const TABLE_HEAD = [
   "",
 ];
 
-
 export function ProductTable() {
-    const {data: product, isLoading, isSuccess, isError, error} = useGetProductQuery()
-    // console.log(product, isLoading, isSuccess, isError, error)
+  const [open, setOpen] = useState(false);
 
-    if(isLoading){
-        return <div>Loading...</div>
-    }else if(isSuccess){
-        console.log(product)
-    }else if(isError){
-        console.error(error)
-    }
+  const {
+    data: product,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetProductQuery();
+  // console.log(product, isLoading, isSuccess, isError, error)
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  } else if (isSuccess) {
+    console.log(product);
+  } else if (isError) {
+    console.error(error);
+  }
+  const handleOpen = () => setOpen((cur) => !cur);
 
   return (
     <Card className="h-full w-[96%] mx-auto">
+      <DialogWithForm open={open} handleOpen={handleOpen} />
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div className="w-full md:w-72">
@@ -52,7 +59,11 @@ export function ProductTable() {
             />
           </div>
           <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <Button className="flex items-center gap-3 capitalize bg-mainGreen" size="lg">
+            <Button
+              onClick={handleOpen}
+              className="flex items-center gap-3 capitalize bg-mainGreen"
+              size="lg"
+            >
               <PlusIcon className="h-4 w-4" /> Add product
             </Button>
           </div>
@@ -79,19 +90,34 @@ export function ProductTable() {
             </tr>
           </thead>
           <tbody>
-            {product.map(({ product_cat,  product_image, product_price, product_name, product_total, createdAt }, index) => {
-              const isLast = index === product.length - 1;
-              const classes = isLast
-                ? "p-4"
-                : "p-4 border-b border-blue-gray-50";
+            {product.map(
+              (
+                {
+                  product_cat,
+                  product_image,
+                  product_price,
+                  product_name,
+                  product_total,
+                  createdAt,
+                },
+                index
+              ) => {
+                const isLast = index === product.length - 1;
+                const classes = isLast
+                  ? "p-4"
+                  : "p-4 border-b border-blue-gray-50";
                 const dateObject = new Date(createdAt);
-    
+
                 // Format the date as YYYY-MM-DD
-                const formattedDate = dateObject.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
-            
-              return (
-                <tr key={index}>
-                  <td className={classes}>
+                const formattedDate = dateObject.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                });
+
+                return (
+                  <tr key={index}>
+                    <td className={classes}>
                       <div className="flex items-center gap-3">
                         <Avatar
                           src={product_image}
@@ -108,66 +134,67 @@ export function ProductTable() {
                         </Typography>
                       </div>
                     </td>
-                  <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      &#8358;{product_price}
-                    </Typography>
-                  </td>
-                  <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {formattedDate}
-                    </Typography>
-                  </td>
-                  <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {product_total}
-                    </Typography>
-                  </td>
-                  <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {product_total}
-                    </Typography>
-                  </td>
-                  <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {product_cat}
-                    </Typography>
-                  </td>
-                  <td className={classes}>
-                    <Tooltip content="Edit product">
-                      <IconButton variant="text">
-                        <PencilIcon className="h-4 w-4" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip content="Delete product">
-                      <IconButton variant="text">
-                        <TrashIcon className="h-4 w-4 text-red-900" />
-                      </IconButton>
-                    </Tooltip>
-                  </td>
-                </tr>
-              );
-            })}
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        &#8358;{product_price}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {formattedDate}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {product_total}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {product_total}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {product_cat}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Tooltip content="Edit product">
+                        <IconButton variant="text">
+                          <PencilIcon className="h-4 w-4" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip content="Delete product">
+                        <IconButton variant="text">
+                          <TrashIcon className="h-4 w-4 text-red-900" />
+                        </IconButton>
+                      </Tooltip>
+                    </td>
+                  </tr>
+                );
+              }
+            )}
           </tbody>
         </table>
       </CardBody>

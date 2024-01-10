@@ -8,10 +8,21 @@ export const adminApi = createApi({
     //baseUrl: "http://127.0.0.1:3001/"
   }),
   endpoints: (builder) => ({
-
-
+    //get product
     getProduct: builder.query({
       query: () => "product",
+    }),
+    //get product
+    getCategory: builder.query({
+      query: () => "cartegorie/get",
+    }),
+    // add product
+    addProduct: builder.mutation({
+      query: (data) => ({
+        url: "product/add",
+        method: "POST",
+        body: data,
+      }),
     }),
     // login customer
     loginAdmin: builder.mutation({
@@ -33,4 +44,10 @@ export const adminApi = createApi({
   }),
 });
 
-export const { useGetProductQuery, useLoginAdminMutation, useCreateAdminMutation } = adminApi;
+export const {
+  useGetProductQuery,
+  useGetCategoryQuery,
+  useLoginAdminMutation,
+  useAddProductMutation,
+  useCreateAdminMutation,
+} = adminApi;
