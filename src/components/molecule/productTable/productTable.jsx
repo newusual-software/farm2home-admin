@@ -12,9 +12,10 @@ import {
   Avatar,
 } from "@material-tailwind/react";
 import { useGetProductQuery, useDeleteProductMutation } from "../../../services/api";
-import { DialogWithForm } from "../dialogs/addProductDialog";
+import { AddProductForm } from "../dialogs/addProductDialog";
 import { useState } from "react";
 import Pagination from "../pagination/pagination";
+import { useNavigate } from "react-router-dom";
 const TABLE_HEAD = [
   "Name",
   "Price",
@@ -27,7 +28,7 @@ const TABLE_HEAD = [
 
 export function ProductTable() {
   const [open, setOpen] = useState(false);
-
+  const navigate = useNavigate();
   const {
     data: product,
     isLoading,
@@ -63,7 +64,7 @@ export function ProductTable() {
   };
   return (
     <Card className="h-full w-[96%] mx-auto">
-      <DialogWithForm open={open} handleOpen={handleOpen} refetch={refetch} />
+      <AddProductForm open={open} handleOpen={handleOpen} refetch={refetch} />
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div className="w-full md:w-72">
@@ -131,7 +132,7 @@ export function ProductTable() {
                 });
 
                 return (
-                  <tr key={index}>
+                  <tr key={index} className="cursor-pointer hover:bg-greenWhite" onClick={() => navigate(`/product/${_id}`)}>
                     <td className={classes}>
                       <div className="flex items-center gap-3">
                         <Avatar

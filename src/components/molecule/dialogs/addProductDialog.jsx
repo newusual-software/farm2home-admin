@@ -12,14 +12,283 @@ import {
 import { useState } from "react";
 import {
   useAddProductMutation,
-  useGetCategoryQuery,
+  // useGetCategoryQuery,
 } from "../../../services/api";
 import { useAddImageMutation } from "../../../services/cloudinary";
 
-export function DialogWithForm({ handleOpen, open, refetch }) {
+const agriculturalData = [
+  {
+    category: "Cereals",
+    subcategories: [
+      {
+        name: "Wheat",
+        subsubcategories: ["Hard Red Wheat", "Soft Red Wheat", "Durum Wheat"],
+      },
+      {
+        name: "Rice",
+        subsubcategories: [
+          "Long Grain Rice",
+          "Short Grain Rice",
+          "Basmati Rice",
+        ],
+      },
+      {
+        name: "Maize",
+        subsubcategories: ["Yellow Maize", "White Maize"],
+      },
+      {
+        name: "Millet",
+        subsubcategories: ["Pearl Millet", "Finger Millet", "Foxtail Millet"],
+      },
+      {
+        name: "Oat",
+        subsubcategories: ["Rolled Oats", "Steel-Cut Oats", "Instant Oats"],
+      },
+      {
+        name: "Barley",
+        subsubcategories: ["Two-Row Barley", "Six-Row Barley"],
+      },
+    ],
+  },
+  {
+    category: "Legumes",
+    subcategories: [
+      {
+        name: "Lentils",
+        subsubcategories: [],
+      },
+      {
+        name: "Chickpeas",
+        subsubcategories: [],
+      },
+      {
+        name: "Peas",
+        subsubcategories: [],
+      },
+    ],
+  },
+  {
+    category: "Vegetables",
+    subcategories: [
+      {
+        name: "Leafy Greens",
+        subsubcategories: ["Spinach", "Kale", "Lettuce"],
+      },
+      {
+        name: "Root Vegetables",
+        subsubcategories: ["Carrots", "Potatoes", "Radishes"],
+      },
+      {
+        name: "Cruciferous Vegetables",
+        subsubcategories: ["Broccoli", "Cauliflower", "Cabbage"],
+      },
+    ],
+  },
+  {
+    category: "Fruits",
+    subcategories: [
+      {
+        name: "Citrus",
+        subsubcategories: ["Oranges", "Lemons", "Grapefruits"],
+      },
+      {
+        name: "Berries",
+        subsubcategories: ["Strawberries", "Blueberries", "Raspberries"],
+      },
+      {
+        name: "Stone Fruits",
+        subsubcategories: ["Peaches", "Plums", "Cherries"],
+      },
+    ],
+  },
+  {
+    category: "Nuts",
+
+    subcategories: [
+      {
+        name: "Peaches",
+        subsubcategories: [],
+      },
+      {
+        name: "Almonds",
+        subsubcategories: [],
+      },
+      {
+        name: "Walnuts",
+        subsubcategories: [],
+      },
+      {
+        name: "Pecans",
+        subsubcategories: [],
+      },
+    ],
+  },
+  {
+    category: "Oilseeds",
+    subcategories: [
+      {
+        name: "Soybeans",
+        subsubcategories: [],
+      },
+      {
+        name: "Sunflower Seeds",
+        subsubcategories: [],
+      },
+      {
+        name: "Canola",
+        subsubcategories: [],
+      },
+    ],
+  },
+  {
+    category: "Sugars and Starches",
+
+    subcategories: [
+      {
+        name: "Cane Sugar",
+        subsubcategories: [],
+      },
+      {
+        name: "Beet Sugar",
+        subsubcategories: [],
+      },
+      {
+        name: "Potatoes",
+        subsubcategories: [],
+      },
+      {
+        name: "Corn",
+        subsubcategories: [],
+      },
+    ],
+  },
+  {
+    category: "Fibres",
+    subcategories: [
+      {
+        name: "Cotton",
+        subsubcategories: [],
+      },
+      {
+        name: "Flax",
+        subsubcategories: [],
+      },
+      {
+        name: "Hemp",
+        subsubcategories: [],
+      },
+    ],
+  },
+  {
+    category: "Beverages",
+    subcategories: [
+      {
+        name: "Tea",
+        subsubcategories: ["Black Tea", "Green Tea", "Herbal Tea"],
+      },
+      {
+        name: "Coffee",
+        subsubcategories: ["Arabica", "Robusta"],
+      },
+    ],
+  },
+  {
+    category: "Narcotics",
+    subcategories: [
+      {
+        name: "Opium Poppy",
+        subsubcategories: [],
+      },
+      {
+        name: "Coca",
+        subsubcategories: [],
+      },
+    ],
+  },
+  {
+    category: "Spices",
+    subcategories: [
+      {
+        name: "Pepper",
+        subsubcategories: [],
+      },
+      {
+        name: "Cumin",
+        subsubcategories: [],
+      },
+      {
+        name: "Coriander",
+        subsubcategories: [],
+      },
+    ],
+  },
+  {
+    category: "Condiments",
+    subcategories: [
+      {
+        name: "Mustard",
+        subsubcategories: [],
+      },
+      {
+        name: "Ketchup",
+        subsubcategories: [],
+      },
+      {
+        name: "Soy Sauce",
+        subsubcategories: [],
+      },
+    ],
+  },
+  {
+    category: "Rubber",
+    subcategories: [],
+    subsubcategories: [],
+  },
+  {
+    category: "Forage",
+    subcategories: [
+      {
+        name: "Alfalfa",
+        subsubcategories: [],
+      },
+      {
+        name: "Clover",
+        subsubcategories: [],
+      },
+      {
+        name: "Fescue",
+        subsubcategories: [],
+      },
+    ],
+    subsubcategories: [],
+  },
+  {
+    category: "Green Manure",
+    subcategories: [],
+    subsubcategories: [],
+  },
+  {
+    category: "Tuber",
+    subcategories: [{
+      name: "Potatoes",
+      subsubcategories: ["Sweet Potatoes", "Irish Potatoes"],
+    },
+    {
+      name: "Yams",
+      subsubcategories: [],
+    },
+   ],
+    subsubcategories: [],
+  },
+];
+
+export function AddProductForm({ handleOpen, open, refetch }) {
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedSubcategory, setSelectedSubcategory] = useState("");
+  const [selectedSubSubcategory, setSelectedSubSubcategory] = useState("");
   const [formData, setFormData] = useState({
     productName: "",
+    productBrandName: "",
     productAmount: 0,
     productImage: null,
     productQuantity: 0,
@@ -55,21 +324,32 @@ export function DialogWithForm({ handleOpen, open, refetch }) {
     }
   };
 
-  const {
-    data: category,
-    isLoading: loading,
-    isError,
-    error,
-  } = useGetCategoryQuery();
+  // const {
+  //   data: category,
+  //   isLoading: loading,
+  //   isError,
+  //   error,
+  // } = useGetCategoryQuery();
 
-  if(loading){
-    return <div>loading...</div>
-  } else if (isError) {
-    console.error(error);
-  }
+  // if (loading) {
+  //   return <div>loading...</div>;
+  // } else if (isError) {
+  //   console.error(error);
+  // }
 
   const handleSelectCategory = (newOption) => {
     setSelectedCategory(newOption);
+    setSelectedSubcategory(""); // Reset subcategory when changing category
+    setSelectedSubSubcategory(""); // Reset subsubcategory when changing category
+  };
+
+  const handleSelectSubcategory = (newOption) => {
+    setSelectedSubcategory(newOption);
+    setSelectedSubSubcategory(""); // Reset subsubcategory when changing subcategory
+  };
+
+  const handleSelectSubSubcategory = (newOption) => {
+    setSelectedSubSubcategory(newOption);
   };
 
   const handleSubmit = async () => {
@@ -107,7 +387,7 @@ export function DialogWithForm({ handleOpen, open, refetch }) {
           const productResponse = await addProduct(postDataInfo).unwrap();
 
           console.log(productResponse);
-          refetch() 
+          refetch();
           handleOpen(false);
         }
       } else {
@@ -122,13 +402,13 @@ export function DialogWithForm({ handleOpen, open, refetch }) {
   return (
     <>
       <Dialog
-        size="md"
+        size="lg"
         open={open}
         handler={handleOpen}
         className="bg-transparent shadow-none"
       >
         <Card className="mx-auto w-full max-w-full">
-          <CardBody className="flex flex-col gap-4">
+          <CardBody className="flex overflow-y-auto h-[35rem] flex-col gap-4">
             <Typography variant="h4" color="blue-gray">
               Add Product
             </Typography>
@@ -143,6 +423,19 @@ export function DialogWithForm({ handleOpen, open, refetch }) {
                   onChange={handleChange}
                 />
               </div>
+              <div className="w-1/2">
+                <Typography variant="h6">Brand Name</Typography>
+                <Input
+                  label="Brand Name"
+                  size="lg"
+                  name="productBrandName"
+                  value={formData.productBrandName}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="-mb-2 flex gap-3 w-full">
               <div className="w-1/2">
                 <Typography variant="h6">Product Amount</Typography>
                 <div className="relative">
@@ -163,6 +456,17 @@ export function DialogWithForm({ handleOpen, open, refetch }) {
                   </div>
                 </div>
               </div>
+              <div className="w-full md:w-1/2">
+                <Typography variant="h6">Total Quantity</Typography>
+                <Input
+                  type="number"
+                  label="Quantity"
+                  size="lg"
+                  name="productQuantity"
+                  value={formData.productQuantity}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
             <div className="-mb-2">
               <Typography variant="h6">Product Image</Typography>
@@ -182,34 +486,94 @@ export function DialogWithForm({ handleOpen, open, refetch }) {
             </div>
 
             <div className="my-2 flex gap-3 w-full">
-              <div className="w-full md:w-1/2">
-                <Typography variant="h6">Total Quantity</Typography>
-                <Input
-                  type="number"
-                  label="Quantity"
-                  size="lg"
-                  name="productQuantity"
-                  value={formData.productQuantity}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="w-full md:w-1/2">
-                <Typography variant="h6">Add category </Typography>
+              <div className="w-full md:w-1/3">
+                <Typography variant="h6">Add category</Typography>
                 <Select
                   size="lg"
                   label="Select category"
                   value={selectedCategory}
                   onChange={handleSelectCategory}
                 >
-                  {category?.data?.map((category, index) => (
+                  {agriculturalData.map((category, index) => (
                     <Option
                       key={index}
-                      value={category.name}
-                      label={category.name}
+                      value={category.category}
+                      label={category.category}
                     >
-                      {category.name}
+                      {category.category}
                     </Option>
                   ))}
+                </Select>
+              </div>
+              <div className="w-full md:w-1/3">
+                <Typography variant="h6">Choose sub category</Typography>
+                <Select
+                  size="lg"
+                  label="Select sub category"
+                  value={selectedSubcategory}
+                  onChange={handleSelectSubcategory}
+                  disabled={
+                    !selectedCategory ||
+                    !agriculturalData.find(
+                      (category) => category.category === selectedCategory
+                    )?.subcategories.length
+                  }
+                >
+                  {selectedCategory &&
+                    agriculturalData
+                      .find(
+                        (category) => category.category === selectedCategory
+                      )
+                      ?.subcategories.map((subcategory, index) => (
+                        <Option
+                          key={index}
+                          value={subcategory.name}
+                          label={subcategory.name}
+                        >
+                          {subcategory.name}
+                        </Option>
+                      ))}
+                </Select>
+              </div>
+              <div className="w-full md:w-1/3">
+                <Typography variant="h6">Add sub sub category</Typography>
+                <Select
+                  size="lg"
+                  label="Select sub sub category"
+                  value={selectedSubSubcategory}
+                  onChange={handleSelectSubSubcategory}
+                  disabled={
+                    !selectedCategory ||
+                    !selectedSubcategory ||
+                    !agriculturalData
+                      .find(
+                        (category) => category.category === selectedCategory
+                      )
+                      ?.subcategories.find(
+                        (subcategory) =>
+                          subcategory.name === selectedSubcategory
+                      )?.subsubcategories.length
+                  }
+                >
+                  {selectedCategory &&
+                    selectedSubcategory &&
+                    agriculturalData
+                      .find(
+                        (category) => category.category === selectedCategory
+                      )
+                      ?.subcategories.find(
+                        (subcategory) =>
+                          subcategory.name === selectedSubcategory
+                      )
+                      ?.subsubcategories.map((subsubcategory, index) => (
+                        <Option
+                          key={index}
+                          value={subsubcategory}
+                          label={subsubcategory}
+                        >
+                          {subsubcategory}
+                        </Option>
+                      ))}
                 </Select>
               </div>
             </div>
@@ -245,10 +609,15 @@ export function DialogWithForm({ handleOpen, open, refetch }) {
                 onChange={handleChange}
               />
             </div>
-            <Button variant="gradient" onClick={handleSubmit} fullWidth disabled={isLoading}>
-            {isLoading ? "Adding..." : "Add Product"}
-            </Button>
           </CardBody>
+          <Button
+            variant="gradient"
+            onClick={handleSubmit}
+            fullWidth
+            disabled={isLoading}
+          >
+            {isLoading ? "Adding..." : "Add Product"}
+          </Button>
         </Card>
       </Dialog>
     </>
