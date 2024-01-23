@@ -30,7 +30,7 @@ export function Sidebar() {
           </ListItemPrefix>
           Products
         </ListItem>
-        <ListItem onClick={() => navigate("/")}  className=" text-white ">
+        <ListItem onClick={() => navigate("/customer")}  className=" text-white ">
           <ListItemPrefix>
             <UserGroupIcon className="h-5 w-5" />
            </ListItemPrefix>
