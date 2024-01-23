@@ -20,6 +20,10 @@ export const adminApi = createApi({
       query: () => "product",
     }),
     //get product
+    getCustomer: builder.query({
+      query: () => "customers",
+    }),
+    //get product
     getCategory: builder.query({
       query: () => "cartegorie/get",
     }),
@@ -63,6 +67,7 @@ export const {
   useGetProductQuery,
   useSingleProductQuery,
   useRelatedProductsQuery,
+  useGetCustomerQuery,
   useGetCategoryQuery,
   useLoginAdminMutation,
   useDeleteProductMutation,
