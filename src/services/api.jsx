@@ -8,6 +8,13 @@ export const adminApi = createApi({
     //baseUrl: "http://127.0.0.1:3001/"
   }),
   endpoints: (builder) => ({
+    singleProduct: builder.query({
+      query: (id) => `product/get/${id}`,
+    }),
+
+    relatedProducts: builder.query({
+      query: (productCat) => `product?product_cat=${productCat}`,
+    }),
     //get product
     getProduct: builder.query({
       query: () => "product",
@@ -54,6 +61,8 @@ export const adminApi = createApi({
 
 export const {
   useGetProductQuery,
+  useSingleProductQuery,
+  useRelatedProductsQuery,
   useGetCategoryQuery,
   useLoginAdminMutation,
   useDeleteProductMutation,
