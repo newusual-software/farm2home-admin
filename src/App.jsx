@@ -5,6 +5,7 @@ import UserSignIn from "./pages/auth/userSignIn";
 import ProtectedRoute from "./components/protectedRoute/index";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ProductDescription from "./pages/productDescription";
 function App() {
   return (
     <>
@@ -16,6 +17,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             {/* landing route */}
             <Route path="/" element={<Landing />} />
+            <Route path="/product/:id" element={<ProductDescription />} />
           </Route>
         </Routes>
       </Router>

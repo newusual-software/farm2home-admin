@@ -132,7 +132,7 @@ export function ProductTable() {
                 });
 
                 return (
-                  <tr key={index} className="cursor-pointer hover:bg-greenWhite" onClick={() => navigate(`/product/${_id}`)}>
+                  <tr key={index} className="cursor-pointer hover:bg-greenWhite hover" onClick={() => navigate(`/product/${_id}`)}>
                     <td className={classes}>
                       <div className="flex items-center gap-3">
                         <Avatar
