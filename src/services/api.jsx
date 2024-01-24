@@ -69,12 +69,21 @@ export const adminApi = createApi({
       }),
     }),
 
+// delete customer
+deleteCustomer: builder.mutation({
+  query: (id) => ({
+    url: `customers/${id}`,  // Adjust the endpoint according to your API
+    method: "DELETE",
+  }),
+}),
+
   }),
 });
 
 export const {
   useGetProductQuery,
   useUpdateProductMutation,
+  useDeleteCustomerMutation,
   useSingleProductQuery,
   useRelatedProductsQuery,
   useGetCustomerQuery,

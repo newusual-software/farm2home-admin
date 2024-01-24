@@ -36,6 +36,7 @@ export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
   const [updateProduct, { isLoading }] = useUpdateProductMutation();
   console.log(loading)
   useEffect(() => {
+    if(productId){
     axios
       .get(`http://localhost:3000/product/get/${productId}`)
       .then((response) => {
@@ -65,6 +66,7 @@ export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
       .finally(() => {
         setLoading(false);
       });
+    }
   }, [productId]);
 
   const handleChange = (e) => {

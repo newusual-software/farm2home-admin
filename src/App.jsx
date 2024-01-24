@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProductDescription from "./pages/productDescription";
 import Customer from "./pages/customer";
+import UserSignUp from "./pages/auth/userSignUp";
 function App() {
   return (
     <>
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           {/* authentication routes */}
           <Route path="/sign-in" element={<UserSignIn />} />
+          <Route path="/sign-up" element={<UserSignUp />} />
           {/* protected routes */}
           <Route element={<ProtectedRoute />}>
             {/* landing route */}
