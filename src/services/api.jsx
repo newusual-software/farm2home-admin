@@ -4,8 +4,8 @@ export const adminApi = createApi({
   reducerPath: "adminApi",
   tagTypes: ["Admin"],
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://farm2home.cyclic.app/",
-    //baseUrl: "http://127.0.0.1:3001/"
+    baseUrl: import.meta.env.VITE_BASE_URL,
+    // baseUrl: "http://localhost:3000/"
   }),
   endpoints: (builder) => ({
     singleProduct: builder.query({
@@ -60,11 +60,21 @@ export const adminApi = createApi({
         body: data,
       }),
     }),
+    // update product
+    updateProduct: builder.mutation({
+      query: (data) => ({
+        url: `product/update`, // Assuming your endpoint for updating a product is like /product/update/:id
+        method: "PUT",
+        body: data,
+      }),
+    }),
+
   }),
 });
 
 export const {
   useGetProductQuery,
+  useUpdateProductMutation,
   useSingleProductQuery,
   useRelatedProductsQuery,
   useGetCustomerQuery,

@@ -10,14 +10,13 @@ import {
   Textarea,
 } from "@material-tailwind/react";
 import { useState } from "react";
-import {
-  useAddProductMutation,
-  // useGetCategoryQuery,
+import {useUpdateProductMutation,
+
 } from "../../../services/api";
 import { useAddImageMutation } from "../../../services/cloudinary";
 import { agriculturalData } from "../../../data/category";
 
-export function AddProductForm({ handleOpen, open, refetch }) {
+export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
   const [selectedSubSubcategory, setSelectedSubSubcategory] = useState("");
@@ -31,33 +30,34 @@ export function AddProductForm({ handleOpen, open, refetch }) {
     altImages: [],
   });
   const [addImage] = useAddImageMutation();
+console.log(productId)
+const [updateProduct, { isLoading }] = useUpdateProductMutation();
 
-  const [addProduct, { isLoading }] = useAddProductMutation();
+const handleChange = (e) => {
+  const { name, value, files } = e.target;
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
+  if (name === "productImage") {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: files[0] || null, // Use null if no file is selected
+    }));
+  } else if (name.startsWith("altImage")) {
+    const altImageIndex = parseInt(name.replace("altImage", ""), 10) - 1;
+    const altImagesCopy = [...formData.altImages];
+    altImagesCopy[altImageIndex] = files[0] || null; // Use null if no file is selected
 
-    if (name === "productImage") {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        [name]: files[0],
-      }));
-    } else if (name.startsWith("altImage")) {
-      const altImageIndex = parseInt(name.replace("altImage", ""), 10) - 1;
-      const altImagesCopy = [...formData.altImages];
-      altImagesCopy[altImageIndex] = files[0];
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      altImages: altImagesCopy,
+    }));
+  } else {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  }
+};
 
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        altImages: altImagesCopy,
-      }));
-    } else {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        [name]: value,
-      }));
-    }
-  };
 
   // const {
   //   data: category,
@@ -87,56 +87,92 @@ export function AddProductForm({ handleOpen, open, refetch }) {
     setSelectedSubSubcategory(newOption);
   };
 
-  const handleSubmit = async () => {
-    try {
-      // Check if an image is selected
-      if (formData.productImage) {
-        // Upload the main image to Cloudinary
-        const mainImageResponse = await addImage(formData.productImage);
+const handleSubmit = async () => {
+  try {
+    let mainImageUrl = null;
+    let altImageUrls = [];
 
-        // The response will contain the URL of the uploaded main image
-        const mainImageUrl = mainImageResponse.data.secure_url;
+    // Check if an image is selected
+    if (formData.productImage) {
+      // Upload the main image to Cloudinary
+      const mainImageResponse = await addImage(formData.productImage);
 
-        if (mainImageUrl) {
-          // Upload alt images to Cloudinary
-          const altImageUrls = await Promise.all(
-            formData.altImages.map(async (altImage) => {
-              const altImageResponse = await addImage(altImage);
-              return altImageResponse.data.secure_url;
-            })
-          );
-
-          // Continue with product submission using Cloudinary URLs
-          const postDataInfo = {
-            product_name: formData.productName,
-            product_brand_name: formData.productBrandName,
-            product_image: mainImageUrl,
-            product_total: parseInt(formData.productQuantity, 10),
-            product_cat: selectedCategory,
-            product_sub_cat: selectedSubcategory,
-            product_sub_sub_cat: selectedSubSubcategory,
-            alt_image: altImageUrls, // Use alt_images instead of alt_image
-            product_des: formData.productDescription,
-            product_price: parseFloat(formData.productAmount),
-            product_rate: 5,
-          };
-
-          console.log(postDataInfo)
-          // Add the product
-          const productResponse = await addProduct(postDataInfo).unwrap();
-
-          console.log(productResponse);
-          refetch();
-          handleOpen(false);
-        }
-      } else {
-        // Handle the case where no main image is selected
-        console.error("Please select a main image");
-      }
-    } catch (error) {
-      console.error("Error submitting product:", error);
+      // The response will contain the URL of the uploaded main image
+      mainImageUrl = mainImageResponse.data.secure_url;
     }
-  };
+
+    // Upload alt images to Cloudinary if they are selected
+    if (formData.altImages.length > 0) {
+      altImageUrls = await Promise.all(
+        formData.altImages.map(async (altImage) => {
+          if (altImage) {
+            const altImageResponse = await addImage(altImage);
+            return altImageResponse.data.secure_url;
+          }
+          return null;
+        })
+      );
+    }
+
+    const updateDataInfo = {
+      id: productId, // Provide the product ID for the update
+    };
+
+    // Add fields to updateDataInfo only if they are changed
+    if (formData.productName) {
+      updateDataInfo.product_name = formData.productName;
+    }
+
+    if (formData.productBrandName) {
+      updateDataInfo.product_brand_name = formData.productBrandName;
+    }
+
+    if (mainImageUrl) {
+      updateDataInfo.product_image = mainImageUrl;
+    }
+
+    if (formData.productQuantity) {
+      updateDataInfo.product_total = parseInt(formData.productQuantity, 10);
+    }
+
+    if (selectedCategory) {
+      updateDataInfo.product_cat = selectedCategory;
+    }
+
+    if (selectedSubcategory) {
+      updateDataInfo.product_sub_cat = selectedSubcategory;
+    }
+
+    if (selectedSubSubcategory) {
+      updateDataInfo.product_sub_sub_cat = selectedSubSubcategory;
+    }
+
+    if (altImageUrls.length > 0) {
+      updateDataInfo.alt_image = altImageUrls.filter((url) => url !== null); // Remove null values
+    }
+
+    if (formData.productDescription) {
+      updateDataInfo.product_des = formData.productDescription;
+    }
+
+    if (formData.productAmount) {
+      updateDataInfo.product_price = parseFloat(formData.productAmount);
+    }
+
+    updateDataInfo.product_rate = 5;
+    console.log(updateDataInfo)
+    // Update the product
+    const productResponse = await updateProduct(updateDataInfo).unwrap();
+
+    console.log(productResponse);
+    refetch();
+    handleOpen(false);
+  } catch (error) {
+    console.error("Error submitting product:", error);
+  }
+};
+
+  
 
   return (
     <>
@@ -149,7 +185,7 @@ export function AddProductForm({ handleOpen, open, refetch }) {
         <Card className="mx-auto w-full max-w-full">
           <CardBody className="flex overflow-y-auto h-[35rem] flex-col gap-4">
             <Typography variant="h4" color="blue-gray">
-              Add Product
+              Update Product
             </Typography>
             <div className="-mb-2 flex gap-3 w-full">
               <div className="w-1/2">
@@ -355,7 +391,7 @@ export function AddProductForm({ handleOpen, open, refetch }) {
             fullWidth
             disabled={isLoading}
           >
-            {isLoading ? "Adding..." : "Add Product"}
+            {isLoading ? "Updating..." : "Update Product"}
           </Button>
         </Card>
       </Dialog>
