@@ -4,8 +4,8 @@ export const adminApi = createApi({
   reducerPath: "adminApi",
   tagTypes: ["Admin"],
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_BASE_URL,
-    // baseUrl: "http://localhost:3000/"
+    // baseUrl: import.meta.env.VITE_BASE_URL,
+    baseUrl: "http://localhost:3000/"
   }),
   endpoints: (builder) => ({
     singleProduct: builder.query({

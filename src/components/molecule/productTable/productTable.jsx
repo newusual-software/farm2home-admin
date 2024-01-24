@@ -20,6 +20,7 @@ import { useState } from "react";
 import Pagination from "../pagination/pagination";
 import { useNavigate } from "react-router-dom";
 import { UpdateProductForm } from "../dialogs/updateProductDialog";
+import { TruncateString } from "../../../lib/util/truncateString";
 const TABLE_HEAD = [
   "Name",
   "Price",
@@ -122,7 +123,7 @@ export function ProductTable() {
             </tr>
           </thead>
           <tbody>
-            {product.map(
+            {product?.map(
               (
                 {
                   _id,
@@ -164,13 +165,15 @@ export function ProductTable() {
                           size="md"
                           className="border border-blue-gray-50 bg-blue-gray-50/50"
                         />
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-bold"
-                        >
-                          {product_name}
-                        </Typography>
+                        <Tooltip content={product_name} >
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-bold"
+                          >
+                            {TruncateString({ str: product_name, num: 10 })}
+                          </Typography>
+                        </Tooltip>
                       </div>
                     </td>
                     <td className={classes}>
