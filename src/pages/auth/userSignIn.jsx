@@ -7,16 +7,16 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
 const UserSignIn = () => {
-    const [formData, setFormData] = useState({
-      email: "",
-      password: "",
-    });
-    const [ loginUser, { isLoading } ] = useLoginAdminMutation();
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [loginUser, { isLoading }] = useLoginAdminMutation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    const [passwordError, setPasswordError] = useState("");
-    // const [loading, setLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  // const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,27 +50,28 @@ const UserSignIn = () => {
 
     try {
       loginUser(postDataInfo)
-       .then(res => {
-         if (res.data) {
-          localStorage.setItem('userId', res.data.user._id);
+        .then((res) => {
+          if (res.data.user.role === 5000) {
+            localStorage.setItem("userId", res.data.user._id);
             dispatch(addUser(res.data.user));
-            toast.success("logged in successfully")
+            toast.success("logged in successfully");
             navigate("/");
           } else {
             toast.error("Invalid Email or password");
             return;
           }
-       })
-       .catch(error => console.log(error))
-    } catch(e) {
+        })
+        .catch(() => toast.error("Invalid Email or password"));
+    } catch (e) {
       console.log(e);
     }
-    
   };
 
   return (
     <AuthLayout>
-      <h2 className="text-2xl font-semibold text-center font-workSans mb-4">Farm2home Admin Sign In</h2>
+      <h2 className="text-2xl font-semibold text-center font-workSans mb-4">
+        Farm2home Admin Sign In
+      </h2>
       <form className="bg-white rounded-lg p-8" onSubmit={handleSubmit}>
         <div className=" gap-4 md:gap-5 pt-2">
           <div className="w-full">
@@ -121,7 +122,7 @@ const UserSignIn = () => {
         <button
           type="submit"
           className="bg-mainGreen w-full text-center text-white py-3 px-5 rounded-md hover:bg-green-600 mt-4"
-          disabled={isLoading ?  true : false} // Disable the button while loading
+          disabled={isLoading ? true : false} // Disable the button while loading
         >
           {isLoading ? "Signing in..." : "Sign In"}
         </button>

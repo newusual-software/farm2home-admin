@@ -19,7 +19,7 @@ import { agriculturalData } from "../../../data/category";
 
 export function AddProductForm({ handleOpen, open, refetch }) {
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedSubcategory, setSelectedSubcategory] = useState("");
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [selectedSubSubcategory, setSelectedSubSubcategory] = useState("");
   const [formData, setFormData] = useState({
     productName: "",
@@ -31,6 +31,7 @@ export function AddProductForm({ handleOpen, open, refetch }) {
     altImages: [],
   });
   const [addImage] = useAddImageMutation();
+  const [loading, setLoading] = useState(false);
 
   const [addProduct, { isLoading }] = useAddProductMutation();
 
@@ -88,6 +89,7 @@ export function AddProductForm({ handleOpen, open, refetch }) {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       // Check if an image is selected
       if (formData.productImage) {
@@ -121,7 +123,7 @@ export function AddProductForm({ handleOpen, open, refetch }) {
             product_rate: 5,
           };
 
-          console.log(postDataInfo)
+          console.log(postDataInfo);
           // Add the product
           const productResponse = await addProduct(postDataInfo).unwrap();
 
@@ -136,6 +138,7 @@ export function AddProductForm({ handleOpen, open, refetch }) {
     } catch (error) {
       console.error("Error submitting product:", error);
     }
+    setLoading(false);
   };
 
   return (
@@ -251,6 +254,7 @@ export function AddProductForm({ handleOpen, open, refetch }) {
                   label="Select sub category"
                   value={selectedSubcategory}
                   onChange={handleSelectSubcategory}
+                  placeholder="Select a sub category"
                   disabled={
                     !selectedCategory ||
                     !agriculturalData.find(
@@ -353,9 +357,9 @@ export function AddProductForm({ handleOpen, open, refetch }) {
             variant="gradient"
             onClick={handleSubmit}
             fullWidth
-            disabled={isLoading}
+            disabled={isLoading || loading}
           >
-            {isLoading ? "Adding..." : "Add Product"}
+            {isLoading || loading ? "Adding..." : "Add Product"}
           </Button>
         </Card>
       </Dialog>

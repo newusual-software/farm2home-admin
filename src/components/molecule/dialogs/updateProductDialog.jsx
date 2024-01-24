@@ -9,12 +9,14 @@ import {
   Option,
   Textarea,
 } from "@material-tailwind/react";
-import { useState } from "react";
-import {useUpdateProductMutation,
-
+import { useEffect, useState } from "react";
+import {
+  // useSingleProductQuery,
+  useUpdateProductMutation,
 } from "../../../services/api";
 import { useAddImageMutation } from "../../../services/cloudinary";
 import { agriculturalData } from "../../../data/category";
+import axios from "axios";
 
 export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -30,47 +32,65 @@ export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
     altImages: [],
   });
   const [addImage] = useAddImageMutation();
-console.log(productId)
-const [updateProduct, { isLoading }] = useUpdateProductMutation();
+  const [loading, setLoading] = useState(false)
+  const [updateProduct, { isLoading }] = useUpdateProductMutation();
+  console.log(loading)
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/product/get/${productId}`)
+      .then((response) => {
+        if (response) {
+          console.log(response.data.product);
+          let product = response.data.product
+          
+      setSelectedCategory(product.product_cat);
+      setSelectedSubcategory(product.product_sub_cat);
+      setSelectedSubSubcategory(product.product_sub_sub_cat);
 
-const handleChange = (e) => {
-  const { name, value, files } = e.target;
+      setFormData({
+        productName: product.product_name,
+        productBrandName: product.product_brand_name,
+        productAmount: product.product_price,
+        productQuantity: product.product_total,
+        productDescription: product.product_des,
+        altImages: [],
+        productImage: null,
 
-  if (name === "productImage") {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: files[0] || null, // Use null if no file is selected
-    }));
-  } else if (name.startsWith("altImage")) {
-    const altImageIndex = parseInt(name.replace("altImage", ""), 10) - 1;
-    const altImagesCopy = [...formData.altImages];
-    altImagesCopy[altImageIndex] = files[0] || null; // Use null if no file is selected
+      });
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching address book:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [productId]);
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      altImages: altImagesCopy,
-    }));
-  } else {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  }
-};
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
 
+    if (name === "productImage") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: files[0] || null, // Use null if no file is selected
+      }));
+    } else if (name.startsWith("altImage")) {
+      const altImageIndex = parseInt(name.replace("altImage", ""), 10) - 1;
+      const altImagesCopy = [...formData.altImages];
+      altImagesCopy[altImageIndex] = files[0] || null; // Use null if no file is selected
 
-  // const {
-  //   data: category,
-  //   isLoading: loading,
-  //   isError,
-  //   error,
-  // } = useGetCategoryQuery();
-
-  // if (loading) {
-  //   return <div>loading...</div>;
-  // } else if (isError) {
-  //   console.error(error);
-  // }
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        altImages: altImagesCopy,
+      }));
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    }
+  };
 
   const handleSelectCategory = (newOption) => {
     setSelectedCategory(newOption);
@@ -87,92 +107,90 @@ const handleChange = (e) => {
     setSelectedSubSubcategory(newOption);
   };
 
-const handleSubmit = async () => {
-  try {
-    let mainImageUrl = null;
-    let altImageUrls = [];
+  const handleSubmit = async () => {
+    try {
+      let mainImageUrl = null;
+      let altImageUrls = [];
 
-    // Check if an image is selected
-    if (formData.productImage) {
-      // Upload the main image to Cloudinary
-      const mainImageResponse = await addImage(formData.productImage);
+      // Check if an image is selected
+      if (formData.productImage) {
+        // Upload the main image to Cloudinary
+        const mainImageResponse = await addImage(formData.productImage);
 
-      // The response will contain the URL of the uploaded main image
-      mainImageUrl = mainImageResponse.data.secure_url;
+        // The response will contain the URL of the uploaded main image
+        mainImageUrl = mainImageResponse.data.secure_url;
+      }
+
+      // Upload alt images to Cloudinary if they are selected
+      if (formData.altImages.length > 0) {
+        altImageUrls = await Promise.all(
+          formData.altImages.map(async (altImage) => {
+            if (altImage) {
+              const altImageResponse = await addImage(altImage);
+              return altImageResponse.data.secure_url;
+            }
+            return null;
+          })
+        );
+      }
+
+      const updateDataInfo = {
+        id: productId, // Provide the product ID for the update
+      };
+
+      // Add fields to updateDataInfo only if they are changed
+      if (formData.productName) {
+        updateDataInfo.product_name = formData.productName;
+      }
+
+      if (formData.productBrandName) {
+        updateDataInfo.product_brand_name = formData.productBrandName;
+      }
+
+      if (mainImageUrl) {
+        updateDataInfo.product_image = mainImageUrl;
+      }
+
+      if (formData.productQuantity) {
+        updateDataInfo.product_total = parseInt(formData.productQuantity, 10);
+      }
+
+      if (selectedCategory) {
+        updateDataInfo.product_cat = selectedCategory;
+      }
+
+      if (selectedSubcategory) {
+        updateDataInfo.product_sub_cat = selectedSubcategory;
+      }
+
+      if (selectedSubSubcategory) {
+        updateDataInfo.product_sub_sub_cat = selectedSubSubcategory;
+      }
+
+      if (altImageUrls.length > 0) {
+        updateDataInfo.alt_image = altImageUrls.filter((url) => url !== null); // Remove null values
+      }
+
+      if (formData.productDescription) {
+        updateDataInfo.product_des = formData.productDescription;
+      }
+
+      if (formData.productAmount) {
+        updateDataInfo.product_price = parseFloat(formData.productAmount);
+      }
+
+      updateDataInfo.product_rate = 5;
+      console.log(updateDataInfo);
+      // Update the product
+      const productResponse = await updateProduct(updateDataInfo).unwrap();
+
+      console.log(productResponse);
+      refetch();
+      handleOpen(false);
+    } catch (error) {
+      console.error("Error submitting product:", error);
     }
-
-    // Upload alt images to Cloudinary if they are selected
-    if (formData.altImages.length > 0) {
-      altImageUrls = await Promise.all(
-        formData.altImages.map(async (altImage) => {
-          if (altImage) {
-            const altImageResponse = await addImage(altImage);
-            return altImageResponse.data.secure_url;
-          }
-          return null;
-        })
-      );
-    }
-
-    const updateDataInfo = {
-      id: productId, // Provide the product ID for the update
-    };
-
-    // Add fields to updateDataInfo only if they are changed
-    if (formData.productName) {
-      updateDataInfo.product_name = formData.productName;
-    }
-
-    if (formData.productBrandName) {
-      updateDataInfo.product_brand_name = formData.productBrandName;
-    }
-
-    if (mainImageUrl) {
-      updateDataInfo.product_image = mainImageUrl;
-    }
-
-    if (formData.productQuantity) {
-      updateDataInfo.product_total = parseInt(formData.productQuantity, 10);
-    }
-
-    if (selectedCategory) {
-      updateDataInfo.product_cat = selectedCategory;
-    }
-
-    if (selectedSubcategory) {
-      updateDataInfo.product_sub_cat = selectedSubcategory;
-    }
-
-    if (selectedSubSubcategory) {
-      updateDataInfo.product_sub_sub_cat = selectedSubSubcategory;
-    }
-
-    if (altImageUrls.length > 0) {
-      updateDataInfo.alt_image = altImageUrls.filter((url) => url !== null); // Remove null values
-    }
-
-    if (formData.productDescription) {
-      updateDataInfo.product_des = formData.productDescription;
-    }
-
-    if (formData.productAmount) {
-      updateDataInfo.product_price = parseFloat(formData.productAmount);
-    }
-
-    updateDataInfo.product_rate = 5;
-    console.log(updateDataInfo)
-    // Update the product
-    const productResponse = await updateProduct(updateDataInfo).unwrap();
-
-    console.log(productResponse);
-    refetch();
-    handleOpen(false);
-  } catch (error) {
-    console.error("Error submitting product:", error);
-  }
-};
-
-  
+  };
 
   return (
     <>
