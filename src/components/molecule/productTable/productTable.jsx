@@ -11,11 +11,15 @@ import {
   Input,
   Avatar,
 } from "@material-tailwind/react";
-import { useGetProductQuery, useDeleteProductMutation } from "../../../services/api";
+import {
+  useGetProductQuery,
+  useDeleteProductMutation,
+} from "../../../services/api";
 import { AddProductForm } from "../dialogs/addProductDialog";
 import { useState } from "react";
 import Pagination from "../pagination/pagination";
 import { useNavigate } from "react-router-dom";
+import { UpdateProductForm } from "../dialogs/updateProductDialog";
 const TABLE_HEAD = [
   "Name",
   "Price",
@@ -28,6 +32,9 @@ const TABLE_HEAD = [
 
 export function ProductTable() {
   const [open, setOpen] = useState(false);
+  const [updateOpen, setUpdateOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+
   const navigate = useNavigate();
   const {
     data: product,
@@ -49,13 +56,17 @@ export function ProductTable() {
   }
 
   const handleOpen = () => setOpen((cur) => !cur);
+  const handleUpdateOpen = (productId) => {
+    setSelectedProductId(productId);
+    setUpdateOpen(true);
+  };
 
   const handleDelete = async (_id) => {
     const postData = { id: _id };
-  
+
     try {
       await deleteProductMutation(postData);
-  
+
       // Trigger a refetch after successful deletion
       refetch();
     } catch (error) {
@@ -65,6 +76,12 @@ export function ProductTable() {
   return (
     <Card className="h-full w-[96%] mx-auto">
       <AddProductForm open={open} handleOpen={handleOpen} refetch={refetch} />
+      <UpdateProductForm
+        open={updateOpen}
+        handleOpen={() => setUpdateOpen(false)}
+        refetch={refetch}
+        productId={selectedProductId}
+      />
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div className="w-full md:w-72">
@@ -132,8 +149,14 @@ export function ProductTable() {
                 });
 
                 return (
-                  <tr key={index} className="cursor-pointer hover:bg-greenWhite hover" onClick={() => navigate(`/product/${_id}`)}>
-                    <td className={classes}>
+                  <tr
+                    key={index}
+                    className="cursor-pointer hover:bg-greenWhite hover"
+                  >
+                    <td
+                      className={classes}
+                      onClick={() => navigate(`/product/${_id}`)}
+                    >
                       <div className="flex items-center gap-3">
                         <Avatar
                           src={product_image}
@@ -197,12 +220,18 @@ export function ProductTable() {
                     </td>
                     <td className={classes}>
                       <Tooltip content="Edit product">
-                        <IconButton variant="text">
+                        <IconButton
+                          variant="text"
+                          onClick={() => handleUpdateOpen(_id)}
+                        >
                           <PencilIcon className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>
                       <Tooltip content="Delete product">
-                        <IconButton variant="text" onClick={() => handleDelete(_id)}>
+                        <IconButton
+                          variant="text"
+                          onClick={() => handleDelete(_id)}
+                        >
                           <TrashIcon className="h-4 w-4 text-red-900" />
                         </IconButton>
                       </Tooltip>

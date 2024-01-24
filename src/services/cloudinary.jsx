@@ -2,7 +2,7 @@ import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
 
 export const cloudinaryApi = createApi({
   reducerPath: "cloudinaryApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://api.cloudinary.com/v1_1/phantom1245" }),
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_CLOUDINARY_BASE_URL }),
   endpoints: (builder) => ({
     addImage: builder.mutation({
       query: (file) => {

@@ -97,6 +97,7 @@ export function CustomerTable() {
               ))}
             </tr>
           </thead>
+          {customer?.customers !== undefined ? (
           <tbody>
             {customer?.customers?.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map(
               (
@@ -197,6 +198,11 @@ export function CustomerTable() {
               }
             )}
           </tbody>
+          ) : (
+            <div className="py-14 flex justify-center w-full text-center items-center text-3xl">
+                No customer to display
+            </div>
+          ) }
         </table>
       </CardBody>
       <Pagination />
