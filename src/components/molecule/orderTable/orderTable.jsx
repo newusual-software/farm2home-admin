@@ -143,7 +143,6 @@ export function OrderTable() {
                     key={index}
                     className="cursor-pointer hover:bg-greenWhite hover"
                   >
-                    import.meta.env.VITE_BASE_URL
                     <td
                       className={classes}
                       onClick={() => navigate(`/order/${_id}`)}
