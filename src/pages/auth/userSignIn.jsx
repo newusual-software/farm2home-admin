@@ -52,7 +52,7 @@ const UserSignIn = () => {
       loginUser(postDataInfo)
         .then((res) => {
           console.log(res)
-          if (res.data.user.role === 2001) {
+          if (res.data.user.role === 5000) {
             localStorage.setItem("userId", res.data.user._id);
             dispatch(addUser(res.data.user));
             toast.success("logged in successfully");
