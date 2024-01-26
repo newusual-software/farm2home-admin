@@ -5,11 +5,14 @@ export const adminApi = createApi({
   tagTypes: ["Admin"],
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BASE_URL,
-    // baseUrl: "http://localhost:3000/"
+    // baseUrl: "http://localhost:3000/",
   }),
   endpoints: (builder) => ({
     singleProduct: builder.query({
       query: (id) => `product/get/${id}`,
+    }),
+    singleCustomer: builder.query({
+      query: (id) => `customers/${id}`,
     }),
 
     relatedProducts: builder.query({
@@ -20,12 +23,23 @@ export const adminApi = createApi({
       query: () => "product",
     }),
     //get product
+    getOrders: builder.query({
+      query: () => "order",
+    }),
+    //get product
     getCustomer: builder.query({
       query: () => "customers",
     }),
     //get product
     getCategory: builder.query({
       query: () => "cartegorie/get",
+    }),
+    updateStatus: builder.mutation({
+      query: (data) => ({
+        url: "order/update",
+        method: "PUT",
+        body: data,
+      }),
     }),
     // add product
     addProduct: builder.mutation({
@@ -69,19 +83,21 @@ export const adminApi = createApi({
       }),
     }),
 
-// delete customer
-deleteCustomer: builder.mutation({
-  query: (id) => ({
-    url: `customers/${id}`,  // Adjust the endpoint according to your API
-    method: "DELETE",
-  }),
-}),
-
+    // delete customer
+    deleteCustomer: builder.mutation({
+      query: (id) => ({
+        url: `customers/${id}`, // Adjust the endpoint according to your API
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
 export const {
+  useUpdateStatusMutation,
   useGetProductQuery,
+  useSingleCustomerQuery,
+  useGetOrdersQuery,
   useUpdateProductMutation,
   useDeleteCustomerMutation,
   useSingleProductQuery,
