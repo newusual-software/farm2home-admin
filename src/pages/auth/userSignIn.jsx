@@ -51,6 +51,7 @@ const UserSignIn = () => {
     try {
       loginUser(postDataInfo)
         .then((res) => {
+          console.log(res)
           if (res.data.user.role === 5000) {
             localStorage.setItem("userId", res.data.user._id);
             dispatch(addUser(res.data.user));

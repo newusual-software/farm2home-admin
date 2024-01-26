@@ -36,7 +36,7 @@ export function Sidebar() {
            </ListItemPrefix>
            Customers         
         </ListItem>
-        <ListItem onClick={() => navigate("/")}  className=" text-white ">
+        <ListItem onClick={() => navigate("/order")}  className=" text-white ">
           <ListItemPrefix>
             <ShoppingBagIcon className="h-5 w-5" />
           </ListItemPrefix>

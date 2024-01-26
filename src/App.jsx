@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ProductDescription from "./pages/productDescription";
 import Customer from "./pages/customer";
 import UserSignUp from "./pages/auth/userSignUp";
+import Order from "./pages/order";
 function App() {
   return (
     <>
@@ -23,6 +24,8 @@ function App() {
             <Route path="/dashboard" element={<Landing />} />
             <Route path="/product/:id" element={<ProductDescription />} />
             <Route path="/customer" element={<Customer />} />
+            <Route path="/order" element={<Order />} />
+
           </Route>
         </Routes>
       </Router>

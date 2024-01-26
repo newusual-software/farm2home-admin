@@ -38,7 +38,7 @@ export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
   useEffect(() => {
     if(productId){
     axios
-      .get(`http://localhost:3000/product/get/${productId}`)
+      .get(`${import.meta.env.VITE_BASE_URL}/product/get/${productId}`)
       .then((response) => {
         if (response) {
           console.log(response.data.product);
