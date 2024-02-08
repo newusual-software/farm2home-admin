@@ -9,32 +9,41 @@ import {
   Tooltip,
   Input,
   Checkbox,
-  Chip,
 } from "@material-tailwind/react";
-import { useDeleteCustomerMutation, useGetCustomerQuery } from "../../../services/api";
+import { useDeleteCustomerMutation } from "../../../services/api";
 import Pagination from "../pagination/pagination";
-import { useState } from "react";
-// import twilio from "twilio";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const TABLE_HEAD = [
   "Select User",
-  "Full Name",
-  "Created On",
   "Email Address",
-  "Phone Number",
-  "Role",
   "",
 ];
 
-export function CustomerTable() {
-  const {
-    data: customer,
-    isLoading,
-    isSuccess,
-    isError,
-    error,
-    refetch
-  } = useGetCustomerQuery();
+const Loader = () => {
+  return <div>loading</div>;
+};
+
+export function NewsletterTable() {
+  const [newsLetter, setNewsLetter] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_BASE_URL}news`)
+      .then((response) => {
+        if (response.data) {
+          setNewsLetter(response?.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching orders:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
   const [deleteCustomerMutation] = useDeleteCustomerMutation();
 
   const [selectedEmails, setSelectedEmails] = useState([]);
@@ -76,7 +85,7 @@ export function CustomerTable() {
       try {
         const result = await deleteCustomerMutation(customerId);
         if(result.data.message === "Customer deleted successfully"){
-          refetch()
+          console.log("done")
         }else{
           console.log(result);
         }
@@ -86,14 +95,6 @@ export function CustomerTable() {
       }
     }
   };
-  
-  if (isLoading) {
-    return <div>Loading...</div>;
-  } else if (isSuccess) {
-    // console.log(product);
-  } else if (isError) {
-    console.error(error);
-  }
 
 
   return (
@@ -110,13 +111,14 @@ export function CustomerTable() {
             <Button
               className="px-8 shadow-sm py-3 bg-transparent text-black rounded-[10px] border border-[#7B7B7B] justify-center items-center gap-2 inline-flex"
               size="lg"
-              onClick={() => refetch()}
+              // onClick={() => refetch()}
             >
               All Users
             </Button>
           </div>
         </div>
       </CardHeader>
+      {loading && <Loader />}
       <CardBody className=" px-0">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
@@ -137,40 +139,22 @@ export function CustomerTable() {
               ))}
             </tr>
           </thead>
-          {customer?.customers !== undefined ? (
+          {newsLetter !== undefined ? (
             <tbody>
-              {customer?.customers
-                ?.slice()
-                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                .map(
+              {newsLetter?.map(
                   (
                     {
                       _id,
-                      first_name,
-                      last_name,
+                    
                       email,
-                      phone_number,
-                      createdAt,
-                      role,
                     },
                     index
                   ) => {
-                    const isLast = index === customer.length - 1;
+                    const isLast = index === newsLetter.length - 1;
                     const classes = isLast
                       ? "p-4"
                       : "p-4 border-b border-blue-gray-50";
-                    const dateObject = new Date(createdAt);
-
-                    // Format the date as YYYY-MM-DD
-                    const formattedDate = dateObject.toLocaleDateString(
-                      "en-US",
-                      {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      }
-                    );
-                   
+                    
                     return (
                       <tr
                         key={index}
@@ -185,24 +169,7 @@ export function CustomerTable() {
                             />
                           </div>
                         </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {first_name} {last_name}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {formattedDate}
-                          </Typography>
-                        </td>
+                        
                         <td className={classes}>
                           <Typography
                             variant="small"
@@ -213,25 +180,6 @@ export function CustomerTable() {
                           </Typography>
                         </td>
 
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {phone_number}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <div className="w-max">
-                            <Chip
-                              variant="ghost"
-                              size="sm"
-                              value={role === 5000 ? "admin" : "user"}
-                              color={role === 5000 ? "green" : "blue-gray"}
-                            />
-                          </div>
-                        </td>
                         <td className={classes}>
                           <Tooltip content="Delete User">
                             <IconButton variant="text" onClick={() => handleDelete(_id)}>

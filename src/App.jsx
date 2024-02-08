@@ -9,6 +9,9 @@ import ProductDescription from "./pages/productDescription";
 import Customer from "./pages/customer";
 import UserSignUp from "./pages/auth/userSignUp";
 import Order from "./pages/order";
+import OrderDetails from "./pages/orderDetails";
+import Newsletter from "./pages/newsletter";
+import Marketplace from "./pages/marketplace";
 function App() {
   return (
     <>
@@ -25,6 +28,9 @@ function App() {
             <Route path="/product/:id" element={<ProductDescription />} />
             <Route path="/customer" element={<Customer />} />
             <Route path="/order" element={<Order />} />
+            <Route path="/order/:id" element={<OrderDetails />} />
+            <Route path="/newsletter" element={<Newsletter />} />
+            <Route path="/marketplace" element={<Marketplace />} />
 
           </Route>
         </Routes>

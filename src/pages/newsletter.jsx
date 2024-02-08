@@ -1,14 +1,14 @@
-import { ProductTable } from "../components/molecule/productTable/productTable";
+import { NewsletterTable } from "../components/molecule/newsletterTable/newsletterTable";
 import DefaultLayout from "../layouts/defaultLayout";
 
-export default function Landing() {
+export default function Newsletter() {
   return (
     <DefaultLayout>
       <div className="text-[#212323] pl-10 pt-6 text-xl font-medium font-workSans my-2">
-        Product List
+      Newsletter subscriber List
       </div>
       <>
-      <ProductTable/>
+        <NewsletterTable />
       </>
     </DefaultLayout>
   );

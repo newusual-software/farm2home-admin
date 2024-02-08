@@ -12,7 +12,7 @@ export default function DefaultLayout({ children }) {
             <Header />
           </div>
           
-          <div className="mt-20 ml-3">{children}</div>
+          <div className="mt-[4.5rem] pb-4 bg-[#e7e7e7]">{children}</div>
         </div>
       </div>
   );

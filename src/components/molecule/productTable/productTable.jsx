@@ -23,10 +23,10 @@ import { UpdateProductForm } from "../dialogs/updateProductDialog";
 import { TruncateString } from "../../../lib/util/truncateString";
 const TABLE_HEAD = [
   "Name",
-  "Price",
+  "Selling Price",
+  "Cost Price",
   "Date",
   "Total Quantity",
-  "Rem.Quantity",
   "category",
   "",
 ];
@@ -102,7 +102,7 @@ export function ProductTable() {
           </div>
         </div>
       </CardHeader>
-      <CardBody className=" px-0">
+      <CardBody className=" px-1">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
@@ -132,6 +132,7 @@ export function ProductTable() {
                   product_price,
                   product_name,
                   product_total,
+                  product_cost_price,
                   createdAt,
                 },
                 index
@@ -171,7 +172,7 @@ export function ProductTable() {
                             color="blue-gray"
                             className="font-bold"
                           >
-                            {TruncateString({ str: product_name, num: 10 })}
+                            {TruncateString({ str: product_name, num: 24 })}
                           </Typography>
                         </Tooltip>
                       </div>
@@ -183,6 +184,15 @@ export function ProductTable() {
                         className="font-normal"
                       >
                         &#8358;{product_price}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        &#8358;{product_cost_price}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -203,15 +213,7 @@ export function ProductTable() {
                         {product_total}
                       </Typography>
                     </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {product_total}
-                      </Typography>
-                    </td>
+                    
                     <td className={classes}>
                       <Typography
                         variant="small"
