@@ -38,9 +38,8 @@ export function CustomerTable() {
   const [deleteCustomerMutation] = useDeleteCustomerMutation();
 
   const [selectedEmails, setSelectedEmails] = useState([]);
-  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState([]);
 
-  const handleCheckboxChange = (email, phone_number) => {
+  const handleCheckboxChange = (email) => {
     setSelectedEmails((prevSelectedEmails) => {
       if (prevSelectedEmails.includes(email)) {
         // Remove the email if it's already selected
@@ -53,17 +52,7 @@ export function CustomerTable() {
       }
     });
 
-    setSelectedPhoneNumber((prevSelectedPhoneNUmber) => {
-      if (prevSelectedPhoneNUmber.includes(phone_number)) {
-        // Remove the email if it's already selected
-        return prevSelectedPhoneNUmber.filter(
-          (selectedPhoneNumber) => selectedPhoneNumber !== phone_number
-        );
-      } else {
-        // Add the phone_number if it's not selected
-        return [...prevSelectedPhoneNUmber, phone_number];
-      }
-    });
+
   };
 
   const handleSendEmail = () => {
@@ -78,35 +67,26 @@ export function CustomerTable() {
     } else {
       console.log("No emails selected");
     }
-  };
-  const handleSendMessage = () => {
-    if (selectedEmails.length > 0) {
-      console.log("Selected Emails:", selectedEmails);
-  
-      // Create a mailto link with pre-filled recipients
-      const mailtoLink = `mailto:${selectedEmails.join(',')}`;
-  
-      // Open the link in a new window or tab
-      window.open(mailtoLink, '_blank');
-    } else {
-      console.log("No emails selected");
-    }
-  };
-
+  }
   const handleDelete = async (customerId) => {
-    console.log(customerId)
-    try {
-      const result = await deleteCustomerMutation(customerId);
-      if(result.data.message === "Customer deleted successfully"){
-        refetch()
-      }else{
-        console.log(result);
+    // Display a confirmation dialog before deleting
+    const isConfirmed = window.confirm("Are you sure you want to delete this user?");
+    
+    if (isConfirmed) {
+      try {
+        const result = await deleteCustomerMutation(customerId);
+        if(result.data.message === "Customer deleted successfully"){
+          refetch()
+        }else{
+          console.log(result);
+        }
+      } catch (error) {
+        // Handle errors
+        console.error(error);
       }
-    } catch (error) {
-      // Handle errors
-      console.error(error);
     }
   };
+  
   if (isLoading) {
     return <div>Loading...</div>;
   } else if (isSuccess) {
@@ -200,9 +180,8 @@ export function CustomerTable() {
                           <div className="flex items-center gap-3">
                             <Checkbox
                               ripple={true}
-                              checked={(selectedEmails.includes(email),
-                                        selectedPhoneNumber.includes(phone_number))}
-                              onChange={() => handleCheckboxChange(email, phone_number)}
+                              checked={selectedEmails.includes(email)}
+                              onChange={() => handleCheckboxChange(email)}
                             />
                           </div>
                         </td>
@@ -277,7 +256,6 @@ export function CustomerTable() {
         <Button
           className="px-8 shadow-sm py-3 bg-mainGreen text-white rounded-[10px] border border-[#7B7B7B] justify-center items-center gap-2 inline-flex"
           size="lg"
-          onClick={handleSendMessage}
           disabled
         >
           send sms

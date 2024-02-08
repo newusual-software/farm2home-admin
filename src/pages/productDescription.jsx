@@ -6,8 +6,6 @@ import {
   useSingleProductQuery,
   useRelatedProductsQuery,
 } from "../services/api";
-import { IconButton, Tooltip } from "@material-tailwind/react";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 
 export default function ProductDescription() {
   const { id } = useParams();
@@ -146,26 +144,11 @@ export default function ProductDescription() {
                 Category:{" "}
                 <span className="text-[#636363] text-base font-normal font-workSans leading-snug tracking-wide">
                   {product?.product_cat} &gt;{" "}
-                  {product?.product_sub_cat || "new"} &gt;{" "}
-                  {product?.product_sub_sub_cat || "ppor"}
+                  {product?.product_sub_cat || null} &gt;{" "}
+                  {product?.product_sub_sub_cat || null}
                 </span>
               </div>
-              <div>
-                      <Tooltip content="Edit product">
-                        <IconButton variant="text">
-                          <PencilIcon className="h-4 w-4" /> <span>edit</span>
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip content="Delete product">
-                        <IconButton variant="text" className="">
-                          <div>
-                          <TrashIcon className="h-4 w-4 text-red-900" />
-                          </div>
-                          <div> <span>delete</span></div>
-                          
-                        </IconButton>
-                      </Tooltip>
-                    </div>
+
               <div className="mt-2 text-mainGreen text-[22px] font-semibold font-workSans">
                 Description:
                 <span className="w-[584px] text-gray-800 text-base font-normal font-workSans leading-snug tracking-wide">

@@ -25,6 +25,7 @@ export function AddProductForm({ handleOpen, open, refetch }) {
     productName: "",
     productBrandName: "",
     productAmount: 0,
+    productCostPrice: 0,
     productImage: null,
     productQuantity: 0,
     productDescription: "",
@@ -91,6 +92,11 @@ export function AddProductForm({ handleOpen, open, refetch }) {
   const handleSubmit = async () => {
     setLoading(true);
     try {
+      if (parseFloat(formData.productAmount) <= parseFloat(formData.productCostPrice)) {
+        alert("Product amount must be greater than product cost price");
+        setLoading(false);
+        return;
+      }
       // Check if an image is selected
       if (formData.productImage) {
         // Upload the main image to Cloudinary
@@ -120,6 +126,7 @@ export function AddProductForm({ handleOpen, open, refetch }) {
             alt_image: altImageUrls, // Use alt_images instead of alt_image
             product_des: formData.productDescription,
             product_price: parseFloat(formData.productAmount),
+            product_cost_price: parseFloat(formData.productCostPrice),
             product_rate: 5,
           };
 
@@ -150,7 +157,7 @@ export function AddProductForm({ handleOpen, open, refetch }) {
         className="bg-transparent shadow-none"
       >
         <Card className="mx-auto w-full max-w-full">
-          <CardBody className="flex overflow-y-auto h-[35rem] flex-col gap-4">
+          <CardBody className="flex overflow-y-auto h-[30rem] flex-col gap-4">
             <Typography variant="h4" color="blue-gray">
               Add Product
             </Typography>
@@ -178,7 +185,7 @@ export function AddProductForm({ handleOpen, open, refetch }) {
             </div>
 
             <div className="-mb-2 flex gap-3 w-full">
-              <div className="w-1/2">
+              <div className="w-1/3">
                 <Typography variant="h6">Product Amount</Typography>
                 <div className="relative">
                   <Input
@@ -198,7 +205,27 @@ export function AddProductForm({ handleOpen, open, refetch }) {
                   </div>
                 </div>
               </div>
-              <div className="w-full md:w-1/2">
+              <div className="w-1/3">
+                <Typography variant="h6">Product cost price</Typography>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    size="lg"
+                    className="py-[.65rem] px-4 ps-9 pe-16 block w-ful border-gray-400 border shadow-sm rounded-lg text-sm "
+                    placeholder="0.00"
+                    name="productCostPrice"
+                    value={formData.productCostPrice}
+                    onChange={handleChange}
+                  />
+                  <div className="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4">
+                    <span className="text-gray-500">&#8358;</span>
+                  </div>
+                  <div className="absolute inset-y-0 end-0 flex items-center pointer-events-none z-20 pe-4">
+                    <span className="text-gray-500">NGN</span>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full md:w-1/3">
                 <Typography variant="h6">Total Quantity</Typography>
                 <Input
                   type="number"

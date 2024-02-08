@@ -22,7 +22,8 @@ const TABLE_HEAD = [
   "Order Id",
   "Date",
   "Amount Paid",
-  "Customer Id",
+  //phone number for delivery
+  "phone number",
   "Status",
   "",
 ];
@@ -36,9 +37,10 @@ export function OrderTable() {
   
     useEffect(() => {
       axios
-        .get(`${import.meta.env.VITE_BASE_URL}/order/`)
+        .get(`http://localhost:3000/order/`)
         .then((response) => {
           if (response.data) {
+            console.log(response.data)
             setOrder(response.data);
           }
         })
@@ -112,13 +114,14 @@ export function OrderTable() {
             </tr>
           </thead>
           <tbody>
-            {order?.map(
+            {order?.slice()
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map(
               (
                 {
                   _id,
                   address,
-                  orderID,
                   customer_id,
+                  orderID,
                   amount_paid,
                   status,
                   createdAt,
@@ -149,7 +152,7 @@ export function OrderTable() {
                     >
                       <div className="flex items-center gap-3">
                         <Tooltip
-                          content={address.first_name + " " + address.last_name}
+                          content={customer_id.first_name + " " + customer_id.last_name}
                         >
                           <Typography
                             variant="small"
@@ -157,7 +160,7 @@ export function OrderTable() {
                             className="font-bold"
                           >
                             {TruncateString({
-                              str: address.first_name + " " + address.last_name,
+                              str: customer_id.first_name + " " + customer_id.last_name,
                               num: 10,
                             })}
                           </Typography>
@@ -191,15 +194,17 @@ export function OrderTable() {
                         &#8358;{amount_paid}
                       </Typography>
                     </td>
+                    
                     <td className={classes}>
                       <Typography
                         variant="small"
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {customer_id}
+                        {address.phone_number}
                       </Typography>
                     </td>
+                    
 
                     <td className={classes}>
                       <div className="w-[6.5rem]">

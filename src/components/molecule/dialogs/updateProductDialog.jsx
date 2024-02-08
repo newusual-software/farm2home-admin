@@ -203,7 +203,7 @@ export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
         className="bg-transparent shadow-none"
       >
         <Card className="mx-auto w-full max-w-full">
-          <CardBody className="flex overflow-y-auto h-[35rem] flex-col gap-4">
+          <CardBody className="flex overflow-y-auto h-[30rem] flex-col gap-4">
             <Typography variant="h4" color="blue-gray">
               Update Product
             </Typography>
