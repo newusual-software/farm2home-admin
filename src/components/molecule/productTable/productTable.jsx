@@ -102,7 +102,7 @@ export function ProductTable() {
           </div>
         </div>
       </CardHeader>
-      <CardBody className=" px-0">
+      <CardBody className=" px-1">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
