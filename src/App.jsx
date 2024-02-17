@@ -12,6 +12,7 @@ import Order from "./pages/order";
 import OrderDetails from "./pages/orderDetails";
 import Newsletter from "./pages/newsletter";
 import Marketplace from "./pages/marketplace";
+import Dashboard from "./pages/dashboard";
 function App() {
   return (
     <>
@@ -23,8 +24,8 @@ function App() {
           {/* protected routes */}
           <Route element={<ProtectedRoute />}>
             {/* landing route */}
-            <Route path="/" element={<Landing />} />
-            <Route path="/dashboard" element={<Landing />} />
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/products" element={<Landing />} />
             <Route path="/product/:id" element={<ProductDescription />} />
             <Route path="/customer" element={<Customer />} />
             <Route path="/order" element={<Order />} />

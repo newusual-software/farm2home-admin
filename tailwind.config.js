@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 import withMT from "@material-tailwind/react/utils/withMT";
 
 export default withMT({
@@ -5,10 +6,14 @@ export default withMT({
   theme: {
     extend: {
       colors: {
-        "greenWhite": "#EFFDF0",
+        "lightGreen": "#CCF4D1",
+        "lightOrange": "#F0E2BF",
+        "lightPurple": "#D7D1F7",
+        "lightRed": "#FFD2C3",
         "description": "#7B7B7B",
         "mainGreen": "#007145",
-        "lightGreen": "#EFFDF0",
+        "mainPurple": "#8B76F9",
+        "mainRed": "#FFD2C3",
       },
       fontFamily: {
         workSans: ['Work Sans', 'sans-serif'],
@@ -17,4 +22,9 @@ export default withMT({
     },
   },
   plugins: [],
+  safelist: [{
+    pattern: /(bg|text|border)-light(Green|Orange|Red|Purple)/
+}
+
+],
 });

@@ -23,7 +23,7 @@ export function Sidebar() {
           </ListItemPrefix>
           Dashboard
         </ListItem>
-        <ListItem onClick={() => navigate("/")}  className=" text-white ">
+        <ListItem onClick={() => navigate("/products")}  className=" text-white ">
           <ListItemPrefix>
             <ShoppingBagIcon className="h-5 w-5" />
           </ListItemPrefix>
