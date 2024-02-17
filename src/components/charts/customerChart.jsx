@@ -28,7 +28,7 @@ export default function CustomerChart() {
     const [customerCountByMonth, setCustomerCountByMonth] = useState({})
     useEffect(() => {
         axios
-          .get("http://localhost:3000/customer/customer-per-month")
+          .get(`${import.meta.env.VITE_BASE_URL}customer/customer-per-month`)
           .then((response) => {
             if (response.data) {
                 setCustomerCountByMonth(response?.data?.customerCountByMonth);

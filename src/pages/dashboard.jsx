@@ -44,7 +44,7 @@ export default function Dashboard() {
       });
 
     axios
-      .get("http://localhost:3000/order/total/order")
+      .get(`${import.meta.env.VITE_BASE_URL}order/total/order`)
       .then((response) => {
         if (response.data) {
           setTotalRevenue(response.data.totalRevenue);
@@ -54,7 +54,7 @@ export default function Dashboard() {
         console.error("Error fetching orders:", error);
       });
     axios
-      .get("http://localhost:3000/order/total/sold")
+      .get(`${import.meta.env.VITE_BASE_URL}order/total/sold`)
       .then((response) => {
         if (response.data) {
           setTotalProductSold(response.data);

@@ -28,7 +28,7 @@ export default function RevenueChart() {
     const [revenueByMonth, setRevenueByMonth] = useState({})
     useEffect(() => {
         axios
-          .get("http://localhost:3000/order/total/revenue-per-month")
+          .get(`${import.meta.env.VITE_BASE_URL}order/total/revenue-per-month`)
           .then((response) => {
             if (response.data) {
                 setRevenueByMonth(response?.data?.revenueByMonth);
