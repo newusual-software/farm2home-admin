@@ -7,7 +7,6 @@ import {
   Input,
   Select,
   Option,
-  Textarea,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import {
@@ -17,8 +16,10 @@ import {
 import { useAddImageMutation } from "../../../services/cloudinary";
 import { agriculturalData } from "../../../data/category";
 import axios from "axios";
+import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
 
-export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
+export function UpdateProductForm({ handleOpen, open, productId }) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
   const [selectedSubSubcategory, setSelectedSubSubcategory] = useState("");
@@ -28,13 +29,15 @@ export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
     productAmount: 0,
     productImage: null,
     productQuantity: 0,
-    productDescription: "",
     altImages: [],
   });
   const [addImage] = useAddImageMutation();
-  const [loading, setLoading] = useState(false)
   const [updateProduct, { isLoading }] = useUpdateProductMutation();
-  console.log(loading)
+  const [content, setContent] = useState("");
+
+  const handleEditorChange = (value) => {
+    setContent(value);
+  };
   useEffect(() => {
     if(productId){
     axios
@@ -47,13 +50,12 @@ export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
       setSelectedCategory(product.product_cat);
       setSelectedSubcategory(product.product_sub_cat);
       setSelectedSubSubcategory(product.product_sub_sub_cat);
-
+      setContent(product.product_des)
       setFormData({
         productName: product.product_name,
         productBrandName: product.product_brand_name,
         productAmount: product.product_price,
         productQuantity: product.product_total,
-        productDescription: product.product_des,
         altImages: [],
         productImage: null,
 
@@ -63,9 +65,6 @@ export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
       .catch((error) => {
         console.error("Error fetching address book:", error);
       })
-      .finally(() => {
-        setLoading(false);
-      });
     }
   }, [productId]);
 
@@ -173,8 +172,8 @@ export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
         updateDataInfo.alt_image = altImageUrls.filter((url) => url !== null); // Remove null values
       }
 
-      if (formData.productDescription) {
-        updateDataInfo.product_des = formData.productDescription;
+      if (content) {
+        updateDataInfo.product_des = content;
       }
 
       if (formData.productAmount) {
@@ -184,10 +183,10 @@ export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
       updateDataInfo.product_rate = 5;
       console.log(updateDataInfo);
       // Update the product
-      const productResponse = await updateProduct(updateDataInfo).unwrap();
+      await updateProduct(updateDataInfo).unwrap();
 
-      console.log(productResponse);
-      refetch();
+      window.location.reload();
+   
       handleOpen(false);
     } catch (error) {
       console.error("Error submitting product:", error);
@@ -397,12 +396,29 @@ export function UpdateProductForm({ handleOpen, open, refetch, productId }) {
             </div>
             <div>
               <Typography variant="h6">Add description </Typography>
-              <Textarea
-                label="description"
-                name="productDescription"
-                value={formData.productDescription}
-                onChange={handleChange}
-              />
+              <div className="w-full max-w-3xl mx-auto mt-6 mb-20">
+                <ReactQuill
+                  theme="snow"
+                  value={content}
+                  onChange={handleEditorChange}
+                  className="h-[15rem]"
+                  modules={{
+                    toolbar: [
+                      [{ header: "1" }, { header: "2" }, { font: [] }],
+                      [{ size: [] }],
+                      ["bold", "italic", "underline", "strike", "blockquote"],
+                      [
+                        { list: "ordered" },
+                        { list: "bullet" },
+                        { indent: "-1" },
+                        { indent: "+1" },
+                      ],
+                      ["link", "image", "video"],
+                      ["clean"],
+                    ],
+                  }}
+                />
+              </div>          
             </div>
           </CardBody>
           <Button
