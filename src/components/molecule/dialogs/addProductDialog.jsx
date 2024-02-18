@@ -27,7 +27,7 @@ export function AddProductForm({ handleOpen, open, refetch }) {
     productAmount: 0,
     productCostPrice: 0,
     productImage: null,
-    productQuantity: 0,
+    productQuantity: 1,
     productDescription: "",
     altImages: [],
   });

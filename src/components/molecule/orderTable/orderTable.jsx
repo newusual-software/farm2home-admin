@@ -34,7 +34,7 @@ export function OrderTable() {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [updateOrder] = useUpdateStatusMutation();
-
+  
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BASE_URL}order/`)
