@@ -6,6 +6,7 @@ import {
   useSingleProductQuery,
   useRelatedProductsQuery,
 } from "../services/api";
+import DisplayContent from "../components/molecule/displayContent";
 
 export default function ProductDescription() {
   const { id } = useParams();
@@ -143,16 +144,15 @@ export default function ProductDescription() {
               <div className="text-[#636363] text-[22px] font-semibold font-workSans">
                 Category:{" "}
                 <span className="text-[#636363] text-base font-normal font-workSans leading-snug tracking-wide">
-                  {product?.product_cat} &gt;{" "}
-                  {product?.product_sub_cat || null} &gt;{" "}
-                  {product?.product_sub_sub_cat || null}
+                  {product?.product_cat} &gt; {product?.product_sub_cat || null}{" "}
+                  &gt; {product?.product_sub_sub_cat || null}
                 </span>
               </div>
 
               <div className="mt-2 text-mainGreen text-[22px] font-semibold font-workSans">
                 Description:
                 <span className="w-[584px] text-gray-800 text-base font-normal font-workSans leading-snug tracking-wide">
-                  {product?.product_des}
+                  <DisplayContent htmlContent={product?.product_des} />
                 </span>
               </div>
             </div>

@@ -12,7 +12,6 @@ import {
   Avatar,
 } from "@material-tailwind/react";
 import {
-  useGetProductQuery,
   useDeleteProductMutation,
 } from "../../../services/api";
 import { AddProductForm } from "../dialogs/addProductDialog";
@@ -21,6 +20,11 @@ import Pagination from "../pagination/pagination";
 import { useNavigate } from "react-router-dom";
 import { UpdateProductForm } from "../dialogs/updateProductDialog";
 import { TruncateString } from "../../../lib/util/truncateString";
+import { useEffect } from "react";
+import axios from "axios";
+const Loader = () => {
+  return <div>loading...</div>
+}
 const TABLE_HEAD = [
   "Name",
   "Selling Price",
@@ -35,27 +39,28 @@ export function ProductTable() {
   const [open, setOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [product, setProduct] = useState([]);
 
   const navigate = useNavigate();
-  const {
-    data: product,
-    isLoading,
-    isSuccess,
-    isError,
-    error,
-    refetch,
-  } = useGetProductQuery();
+
   const [deleteProductMutation] = useDeleteProductMutation();
-  // console.log(product, isLoading, isSuccess, isError, error)
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  } else if (isSuccess) {
-    // console.log(product);
-  } else if (isError) {
-    console.error(error);
-  }
-
+  let baseUrl = import.meta.env.VITE_BASE_URL
+  useEffect(() => {
+    axios
+      .get(`${baseUrl}product`)
+      .then((response) => {
+        if (response.data) {
+          setProduct(response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching product", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [baseUrl]);
   const handleOpen = () => setOpen((cur) => !cur);
   const handleUpdateOpen = (productId) => {
     setSelectedProductId(productId);
@@ -66,21 +71,25 @@ export function ProductTable() {
     const postData = { id: _id };
 
     try {
-      await deleteProductMutation(postData);
+      const response = await deleteProductMutation(postData);
 
       // Trigger a refetch after successful deletion
-      refetch();
+      if (response.data) {
+        const updatedData = await axios.get(
+          `${baseUrl}product`
+        );
+        setProduct(updatedData.data);
+      }
     } catch (error) {
       console.error("Error deleting product:", error);
     }
   };
   return (
     <Card className="h-full w-[96%] mx-auto">
-      <AddProductForm open={open} handleOpen={handleOpen} refetch={refetch} />
+      <AddProductForm open={open} handleOpen={handleOpen} />
       <UpdateProductForm
         open={updateOpen}
         handleOpen={() => setUpdateOpen(false)}
-        refetch={refetch}
         productId={selectedProductId}
       />
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -102,6 +111,7 @@ export function ProductTable() {
           </div>
         </div>
       </CardHeader>
+
       <CardBody className=" px-1">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
@@ -122,6 +132,8 @@ export function ProductTable() {
               ))}
             </tr>
           </thead>
+          {loading && <Loader/>}
+
           <tbody>
             {product?.map(
               (

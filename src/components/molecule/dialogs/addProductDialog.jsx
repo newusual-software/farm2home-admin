@@ -7,17 +7,15 @@ import {
   Input,
   Select,
   Option,
-  Textarea,
 } from "@material-tailwind/react";
 import { useState } from "react";
-import {
-  useAddProductMutation,
-  // useGetCategoryQuery,
-} from "../../../services/api";
+import { useAddProductMutation } from "../../../services/api";
 import { useAddImageMutation } from "../../../services/cloudinary";
 import { agriculturalData } from "../../../data/category";
+import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
 
-export function AddProductForm({ handleOpen, open, refetch }) {
+export function AddProductForm({ handleOpen, open }) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [selectedSubSubcategory, setSelectedSubSubcategory] = useState("");
@@ -28,14 +26,17 @@ export function AddProductForm({ handleOpen, open, refetch }) {
     productCostPrice: 0,
     productImage: null,
     productQuantity: 1,
-    productDescription: "",
     altImages: [],
   });
   const [addImage] = useAddImageMutation();
   const [loading, setLoading] = useState(false);
 
   const [addProduct, { isLoading }] = useAddProductMutation();
+  const [content, setContent] = useState("");
 
+  const handleEditorChange = (value) => {
+    setContent(value);
+  };
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -61,19 +62,6 @@ export function AddProductForm({ handleOpen, open, refetch }) {
     }
   };
 
-  // const {
-  //   data: category,
-  //   isLoading: loading,
-  //   isError,
-  //   error,
-  // } = useGetCategoryQuery();
-
-  // if (loading) {
-  //   return <div>loading...</div>;
-  // } else if (isError) {
-  //   console.error(error);
-  // }
-
   const handleSelectCategory = (newOption) => {
     setSelectedCategory(newOption);
     setSelectedSubcategory(""); // Reset subcategory when changing category
@@ -92,7 +80,10 @@ export function AddProductForm({ handleOpen, open, refetch }) {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      if (parseFloat(formData.productAmount) <= parseFloat(formData.productCostPrice)) {
+      if (
+        parseFloat(formData.productAmount) <=
+        parseFloat(formData.productCostPrice)
+      ) {
         alert("Product amount must be greater than product cost price");
         setLoading(false);
         return;
@@ -124,18 +115,15 @@ export function AddProductForm({ handleOpen, open, refetch }) {
             product_sub_cat: selectedSubcategory,
             product_sub_sub_cat: selectedSubSubcategory,
             alt_image: altImageUrls, // Use alt_images instead of alt_image
-            product_des: formData.productDescription,
+            product_des: content,
             product_price: parseFloat(formData.productAmount),
             product_cost_price: parseFloat(formData.productCostPrice),
             product_rate: 5,
           };
 
-          console.log(postDataInfo);
           // Add the product
-          const productResponse = await addProduct(postDataInfo).unwrap();
-
-          console.log(productResponse);
-          refetch();
+          await addProduct(postDataInfo).unwrap();
+          window.location.reload();
           handleOpen(false);
         }
       } else {
@@ -372,12 +360,29 @@ export function AddProductForm({ handleOpen, open, refetch }) {
             </div>
             <div>
               <Typography variant="h6">Add description </Typography>
-              <Textarea
-                label="description"
-                name="productDescription"
-                value={formData.productDescription}
-                onChange={handleChange}
-              />
+              <div className="w-full max-w-3xl mx-auto mt-6 mb-20">
+                <ReactQuill
+                  theme="snow"
+                  value={content}
+                  onChange={handleEditorChange}
+                  className="h-[15rem]"
+                  modules={{
+                    toolbar: [
+                      [{ header: "1" }, { header: "2" }, { font: [] }],
+                      [{ size: [] }],
+                      ["bold", "italic", "underline", "strike", "blockquote"],
+                      [
+                        { list: "ordered" },
+                        { list: "bullet" },
+                        { indent: "-1" },
+                        { indent: "+1" },
+                      ],
+                      ["link", "image", "video"],
+                      ["clean"],
+                    ],
+                  }}
+                />
+              </div>
             </div>
           </CardBody>
           <Button
