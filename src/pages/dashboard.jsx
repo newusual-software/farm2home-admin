@@ -14,12 +14,29 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Analytics } from "../components/analytics/analyticChart";
 import { OrderTable } from "../components/molecule/orderTable/orderTable";
+import io from 'socket.io-client';
 
+const socket = io(import.meta.env.VITE_BASE_URL);
+console.log(socket)
 export default function Dashboard() {
   const [totalCustomer, setTotalCustomer] = useState(0);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalProductSold, setTotalProductSold] = useState(0);
+  const [notifications, setNotification] = useState([])
+
+  useEffect(() => {
+    // Listen for "notification" event from Socket.IO server
+    socket.on("notification", (data) => {
+      console.log(data)
+      setNotification(data);
+    });
+
+    // Clean up event listener on component unmount
+    return () => {
+      socket.off("notification");
+    };
+  }, []);
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BASE_URL}customers/`)
@@ -126,7 +143,7 @@ export default function Dashboard() {
             <Analytics />
           </div>
           <div className="w-[30%]">
-            <Badge content="5">
+            <Badge content={notifications.length}>
               <Button className="bg-mainGreen">Notifications</Button>
             </Badge>
             <Card className="w-full  mt-9 overflow-y-auto h-[20rem] rounded-md">
@@ -251,15 +268,13 @@ export default function Dashboard() {
                     />
                   </ListItemSuffix>
                 </ListItem>
-                
-
               </List>
             </Card>
           </div>
         </div>
         <div className="mt-10">
-        <OrderTable />
-      </div>
+          <OrderTable />
+        </div>
       </div>
     </DefaultLayout>
   );
