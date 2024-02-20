@@ -40,7 +40,6 @@ export function OrderTable() {
       .get(`${import.meta.env.VITE_BASE_URL}order/`)
       .then((response) => {
         if (response.data) {
-          console.log(response.data);
           setOrder(response.data);
         }
       })
