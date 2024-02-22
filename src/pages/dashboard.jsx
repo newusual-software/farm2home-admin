@@ -49,7 +49,7 @@ export default function Dashboard() {
         console.error("Error fetching orders:", error);
       });
       axios
-      .get(`https://e-commerce-api-eekt.onrender.com/notification/`)
+      .get(`${import.meta.env.VITE_BASE_URL}notification/`)
       .then((response) => {
         if (response.data) {
           console.log(response.data)
