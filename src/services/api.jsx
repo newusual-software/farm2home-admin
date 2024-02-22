@@ -4,8 +4,8 @@ export const adminApi = createApi({
   reducerPath: "adminApi",
   tagTypes: ["Admin"],
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_BASE_URL,
-    // baseUrl: "http://localhost:3000/",
+    // baseUrl: import.meta.env.VITE_BASE_URL,
+    baseUrl: "http://localhost:3000/",
   }),
   endpoints: (builder) => ({
     singleProduct: builder.query({
@@ -45,6 +45,14 @@ export const adminApi = createApi({
     addProduct: builder.mutation({
       query: (data) => ({
         url: "product/add",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    // add product
+    addCity: builder.mutation({
+      query: (data) => ({
+        url: "pricelist/add",
         method: "POST",
         body: data,
       }),
@@ -143,5 +151,6 @@ export const {
   useAddMarketMutation,
   useAddDistributorsMutation,
   useDeleteDistributorMutation,
-  useDeleteMarketMutation
+  useDeleteMarketMutation,
+  useAddCityMutation
 } = adminApi;

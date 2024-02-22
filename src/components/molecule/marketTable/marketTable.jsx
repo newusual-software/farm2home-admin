@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { AddMarketDialog } from "../dialogs/addMarketDialog";
 import { useDeleteMarketMutation } from "../../../services/api";
+import { AddCityDialog } from "../dialogs/addCityDialog";
 const Loader = () => {
   return <div>loading...</div>;
 };
@@ -31,10 +32,11 @@ const TABLE_HEAD = [
 
 export function MarketTable() {
   const [open, setOpen] = useState(false);
+  const [openCityDialog, setOpenCityDialog] = useState(false);
   const [loading, setLoading] = useState(true);
   const [markets, setMarkets] = useState([]);
   const [deleteMarket] = useDeleteMarketMutation();
-  let baseUrl = import.meta.env.VITE_BASE_URL
+  let baseUrl = import.meta.env.VITE_BASE_URL;
   // let baseUrl = "http://localhost:3000/";
   useEffect(() => {
     axios
@@ -52,6 +54,9 @@ export function MarketTable() {
       });
   }, [baseUrl]);
   const handleOpen = () => setOpen((cur) => !cur);
+  const handleOpenCityDialog = () =>
+    setOpenCityDialog((prevState) => !prevState);
+
   const handleDelete = async (_id) => {
     const postData = { id: _id };
 
@@ -60,10 +65,8 @@ export function MarketTable() {
 
       // Trigger a refetch after successful deletion
       if (response.data) {
-        const updatedData = await axios.get(
-          `${baseUrl}marketplace/market`
-        );
-        setMarkets(updatedData.data.data)
+        const updatedData = await axios.get(`${baseUrl}marketplace/market`);
+        setMarkets(updatedData.data.data);
       }
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -72,6 +75,7 @@ export function MarketTable() {
   return (
     <Card className="h-full w-[96%] mx-auto">
       <AddMarketDialog open={open} handleOpen={handleOpen} />
+      <AddCityDialog open={openCityDialog} handleOpen={handleOpenCityDialog} />
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div className="w-full md:w-72">
@@ -81,13 +85,24 @@ export function MarketTable() {
             />
           </div>
           <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <Button
-              onClick={handleOpen}
-              className="flex items-center gap-3 capitalize bg-mainGreen"
-              size="lg"
-            >
-              <PlusIcon className="h-4 w-4" /> Add market
-            </Button>
+            <div>
+              <Button
+                onClick={handleOpen}
+                className="flex items-center gap-3 capitalize bg-mainGreen"
+                size="lg"
+              >
+                <PlusIcon className="h-4 w-4" /> Add market
+              </Button>
+            </div>
+            <div>
+              <Button
+                onClick={handleOpenCityDialog}
+                className="flex items-center gap-3 capitalize bg-mainGreen"
+                size="lg"
+              >
+                <PlusIcon className="h-4 w-4" /> Add City
+              </Button>
+            </div>
           </div>
         </div>
       </CardHeader>
