@@ -3,40 +3,40 @@ import {
   Badge,
   Button,
   Card,
-  Chip,
   List,
   ListItem,
   ListItemPrefix,
-  ListItemSuffix,
 } from "@material-tailwind/react";
 import DefaultLayout from "../layouts/defaultLayout";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Analytics } from "../components/analytics/analyticChart";
 import { OrderTable } from "../components/molecule/orderTable/orderTable";
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
+import { useNavigate } from "react-router-dom";
 
-const socket = io(import.meta.env.VITE_BASE_URL);
-console.log(socket)
+// const socket = io('https://e-commerce-api-eekt.onrender.com');
+// console.log(socket)
 export default function Dashboard() {
   const [totalCustomer, setTotalCustomer] = useState(0);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalProductSold, setTotalProductSold] = useState(0);
   const [notifications, setNotification] = useState([])
+  let navigate = useNavigate()
 
-  useEffect(() => {
-    // Listen for "notification" event from Socket.IO server
-    socket.on("notification", (data) => {
-      console.log(data)
-      setNotification(data);
-    });
-
-    // Clean up event listener on component unmount
-    return () => {
-      socket.off("notification");
-    };
-  }, []);
+  // useEffect(() => {
+  //   // Listen for "notification" event from Socket.IO server
+  //   socket.on("notification", (data) => {
+  //     console.log(data)
+  //     setNotification(data);
+  //   });
+  
+  //   // Clean up event listener on component unmount
+  //   return () => {
+  //     socket.off("notification");
+  //   };
+  // }, [socket]);
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BASE_URL}customers/`)
@@ -48,7 +48,17 @@ export default function Dashboard() {
       .catch((error) => {
         console.error("Error fetching orders:", error);
       });
-
+      axios
+      .get(`https://e-commerce-api-eekt.onrender.com/notification/`)
+      .then((response) => {
+        if (response.data) {
+          console.log(response.data)
+          setNotification(response.data);
+              }
+      })
+      .catch((error) => {
+        console.error("Error fetching orders:", error);
+      });
     axios
       .get(`${import.meta.env.VITE_BASE_URL}product/`)
       .then((response) => {
@@ -147,8 +157,12 @@ export default function Dashboard() {
               <Button className="bg-mainGreen">Notifications</Button>
             </Badge>
             <Card className="w-full  mt-9 overflow-y-auto h-[20rem] rounded-md">
+            
               <List className="my-2 p-0">
-                <ListItem className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white">
+              {notifications.map((item, index) => (
+              <div key={index}>
+              <ListItem onClick={() => navigate(`/order/${item.orderId}`)} className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white">
+                  
                   <ListItemPrefix>
                     <div className=" uppercase w-[2.5rem] h-[2.5rem] text-white rounded-full bg-mainGreen inline-flex justify-center items-center ">
                       PF
@@ -156,118 +170,14 @@ export default function Dashboard() {
                   </ListItemPrefix>
 
                   <div className="font-workSans text-md text-mainGreen hover:text-black">
-                    Phantom Favour{" "}
-                    <div className="text-sm text-gray-500">placed an order</div>
+                    {item.full_name}
+                    <div className="text-sm text-gray-500">{item.message}</div>
                   </div>
-                  <ListItemSuffix>
-                    <Chip
-                      value="2"
-                      variant="ghost"
-                      size="sm"
-                      className="rounded-full px-2 py-1 text-xs group-hover:bg-white/20 group-hover:text-white"
-                    />
-                  </ListItemSuffix>
+                
                 </ListItem>
-                <ListItem className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white">
-                  <ListItemPrefix>
-                    <div className=" uppercase w-[2.5rem] h-[2.5rem] text-white rounded-full bg-mainGreen inline-flex justify-center items-center ">
-                      PF
-                    </div>
-                  </ListItemPrefix>
-
-                  <div className="font-workSans text-md text-mainGreen hover:text-black">
-                    Phantom Favour{" "}
-                    <div className="text-sm text-gray-500">placed an order</div>
-                  </div>
-                  <ListItemSuffix>
-                    <Chip
-                      value="2"
-                      variant="ghost"
-                      size="sm"
-                      className="rounded-full px-2 py-1 text-xs group-hover:bg-white/20 group-hover:text-white"
-                    />
-                  </ListItemSuffix>
-                </ListItem>
-                <ListItem className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white">
-                  <ListItemPrefix>
-                    <div className=" uppercase w-[2.5rem] h-[2.5rem] text-white rounded-full bg-mainGreen inline-flex justify-center items-center ">
-                      PF
-                    </div>
-                  </ListItemPrefix>
-
-                  <div className="font-workSans text-md text-mainGreen hover:text-black">
-                    Phantom Favour{" "}
-                    <div className="text-sm text-gray-500">placed an order</div>
-                  </div>
-                  <ListItemSuffix>
-                    <Chip
-                      value="2"
-                      variant="ghost"
-                      size="sm"
-                      className="rounded-full px-2 py-1 text-xs group-hover:bg-white/20 group-hover:text-white"
-                    />
-                  </ListItemSuffix>
-                </ListItem>
-                <ListItem className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white">
-                  <ListItemPrefix>
-                    <div className=" uppercase w-[2.5rem] h-[2.5rem] text-white rounded-full bg-mainGreen inline-flex justify-center items-center ">
-                      PF
-                    </div>
-                  </ListItemPrefix>
-
-                  <div className="font-workSans text-md text-mainGreen hover:text-black">
-                    Phantom Favour{" "}
-                    <div className="text-sm text-gray-500">placed an order</div>
-                  </div>
-                  <ListItemSuffix>
-                    <Chip
-                      value="2"
-                      variant="ghost"
-                      size="sm"
-                      className="rounded-full px-2 py-1 text-xs group-hover:bg-white/20 group-hover:text-white"
-                    />
-                  </ListItemSuffix>
-                </ListItem>
-                <ListItem className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white">
-                  <ListItemPrefix>
-                    <div className=" uppercase w-[2.5rem] h-[2.5rem] text-white rounded-full bg-mainGreen inline-flex justify-center items-center ">
-                      PF
-                    </div>
-                  </ListItemPrefix>
-
-                  <div className="font-workSans text-md text-mainGreen hover:text-black">
-                    Phantom Favour{" "}
-                    <div className="text-sm text-gray-500">placed an order</div>
-                  </div>
-                  <ListItemSuffix>
-                    <Chip
-                      value="2"
-                      variant="ghost"
-                      size="sm"
-                      className="rounded-full px-2 py-1 text-xs group-hover:bg-white/20 group-hover:text-white"
-                    />
-                  </ListItemSuffix>
-                </ListItem>
-                <ListItem className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white">
-                  <ListItemPrefix>
-                    <div className=" uppercase w-[2.5rem] h-[2.5rem] text-white rounded-full bg-mainGreen inline-flex justify-center items-center ">
-                      PF
-                    </div>
-                  </ListItemPrefix>
-
-                  <div className="font-workSans text-md text-mainGreen hover:text-black">
-                    Phantom Favour{" "}
-                    <div className="text-sm text-gray-500">placed an order</div>
-                  </div>
-                  <ListItemSuffix>
-                    <Chip
-                      value="2"
-                      variant="ghost"
-                      size="sm"
-                      className="rounded-full px-2 py-1 text-xs group-hover:bg-white/20 group-hover:text-white"
-                    />
-                  </ListItemSuffix>
-                </ListItem>
+                </div>
+            ))}
+               
               </List>
             </Card>
           </div>

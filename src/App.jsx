@@ -13,6 +13,7 @@ import OrderDetails from "./pages/orderDetails";
 import Newsletter from "./pages/newsletter";
 import Marketplace from "./pages/marketplace";
 import Dashboard from "./pages/dashboard";
+import Distributors from "./pages/distributors";
 function App() {
   return (
     <>
@@ -32,6 +33,7 @@ function App() {
             <Route path="/order/:id" element={<OrderDetails />} />
             <Route path="/newsletter" element={<Newsletter />} />
             <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/distributors" element={<Distributors />} />
 
           </Route>
         </Routes>

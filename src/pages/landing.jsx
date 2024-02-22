@@ -8,7 +8,7 @@ export default function Landing() {
         Product List
       </div>
       <>
-      <ProductTable/>
+        <ProductTable />
       </>
     </DefaultLayout>
   );

@@ -49,10 +49,42 @@ export const adminApi = createApi({
         body: data,
       }),
     }),
+    // add product
+    addMarket: builder.mutation({
+      query: (data) => ({
+        url: "marketplace/add-market",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    // add product
+    addDistributors: builder.mutation({
+      query: (data) => ({
+        url: "marketplace/add-distributor",
+        method: "POST",
+        body: data,
+      }),
+    }),
     // delete product
     deleteProduct: builder.mutation({
       query: (id) => ({
         url: "product/remove",
+        method: "DELETE",
+        body: id,
+      }),
+    }),
+    // delete product
+    deleteDistributor: builder.mutation({
+      query: (id) => ({
+        url: "marketplace/delete-distributors",
+        method: "DELETE",
+        body: id,
+      }),
+    }),
+    // delete product
+    deleteMarket: builder.mutation({
+      query: (id) => ({
+        url: "marketplace/delete-market",
         method: "DELETE",
         body: id,
       }),
@@ -108,4 +140,8 @@ export const {
   useDeleteProductMutation,
   useAddProductMutation,
   useCreateAdminMutation,
+  useAddMarketMutation,
+  useAddDistributorsMutation,
+  useDeleteDistributorMutation,
+  useDeleteMarketMutation
 } = adminApi;
