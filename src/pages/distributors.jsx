@@ -1,14 +1,14 @@
-import { MarketTable } from "../components/molecule/marketTable/marketTable";
+import { DistributorsTable } from "../components/molecule/distributorsTable/distributorsTable";
 import DefaultLayout from "../layouts/defaultLayout";
 
-export default function Marketplace() {
+export default function Distributors() {
   return (
     <DefaultLayout>
       <div className="text-[#212323] pl-10 pt-6 text-xl font-medium font-workSans my-2">
-        marketplace List
+        distributors List
       </div>
       <>
-        <MarketTable />
+        <DistributorsTable />
       </>
     </DefaultLayout>
   );

@@ -7,6 +7,7 @@ import {
   PresentationChartBarIcon,
   ShoppingBagIcon,
   UserGroupIcon,
+  UsersIcon,
 } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import { MapIcon, NewspaperIcon } from "@heroicons/react/24/outline";
@@ -31,7 +32,7 @@ export function Sidebar() {
         </ListItem>
         <ListItem onClick={() => navigate("/customer")}  className=" text-white ">
           <ListItemPrefix>
-            <UserGroupIcon className="h-5 w-5" />
+            <UsersIcon className="h-5 w-5" />
            </ListItemPrefix>
            Customers         
         </ListItem>
@@ -51,7 +52,13 @@ export function Sidebar() {
           <ListItemPrefix>
             <MapIcon className="h-5 w-5" />
           </ListItemPrefix>
-          marketplace
+          markets
+        </ListItem>
+        <ListItem onClick={() => navigate("/distributors")}  className=" text-white ">
+          <ListItemPrefix>
+            <UserGroupIcon className="h-5 w-5" />
+          </ListItemPrefix>
+          distributors
         </ListItem>
       </List>
     </div>
