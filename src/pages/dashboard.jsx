@@ -159,7 +159,8 @@ export default function Dashboard() {
             <Card className="w-full  mt-9 overflow-y-auto h-[20rem] rounded-md">
             
               <List className="my-2 p-0">
-              {notifications.map((item, index) => (
+              {notifications?.slice()
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))?.map((item, index) => (
               <div key={index}>
               <ListItem onClick={() => navigate(`/order/${item.orderId}`)} className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white">
                   
