@@ -46,8 +46,8 @@ export default function OrderDetails() {
     day: "2-digit",
   });
 
-   // Calculate subtotal
-   const subtotal = orderDetails?.products?.reduce(
+  // Calculate subtotal
+  const subtotal = orderDetails?.products?.reduce(
     (total, item) =>
       total + item.product_id.product_price * item.product_quatity,
     0
@@ -177,7 +177,16 @@ export default function OrderDetails() {
                     {orderDetails?.address?.directions}
                   </span>
                 </div>
+                <div className="text-black font-medium text-lg ">
+                  Nearest Markets:{" "}
+                  <span className="inline-flex flex-col text-gray-600">
+                    {orderDetails?.markets?.map((market) => (
+                      <div key={market.id}>{market.name}</div>
+                    ))}
+                  </span>
+                </div>
               </div>
+
               <table className="w-full min-w-max table-auto my-5 text-left">
                 <thead>
                   <tr>
@@ -296,20 +305,20 @@ export default function OrderDetails() {
                     &#8358;
                     {orderDetails?.products?.reduce(
                       (total, item) =>
-                        (total +
-                        item.product_id.product_price * item.product_quatity),
+                        total +
+                        item.product_id.product_price * item.product_quatity,
                       0
                     )}
                   </div>
                 </div>
                 <div className="flex gap-9 border-b border-[#7E7E7E] pb-2">
-                <div className="text-[#7E7E7E] text-[20px] font-medium font-workSans">
-                  Delivery Charges:
+                  <div className="text-[#7E7E7E] text-[20px] font-medium font-workSans">
+                    Delivery Charges:
+                  </div>
+                  <div className="text-black text-xl font-medium font-workSans">
+                    &#8358;{deliveryCharges}
+                  </div>
                 </div>
-                <div className="text-black text-xl font-medium font-workSans">
-                  &#8358;{deliveryCharges}
-                </div>
-              </div>
                 <div className="flex gap-9">
                   <div className="text-[#7E7E7E] text-[20px] font-medium font-workSans">
                     Total:

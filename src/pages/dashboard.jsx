@@ -6,6 +6,7 @@ import {
   List,
   ListItem,
   ListItemPrefix,
+  ListItemSuffix,
 } from "@material-tailwind/react";
 import DefaultLayout from "../layouts/defaultLayout";
 import { useEffect, useState } from "react";
@@ -14,6 +15,7 @@ import { Analytics } from "../components/analytics/analyticChart";
 import { OrderTable } from "../components/molecule/orderTable/orderTable";
 // import io from 'socket.io-client';
 import { useNavigate } from "react-router-dom";
+import { AddCityDialog } from "../components/molecule/dialogs/addCityDialog";
 
 // const socket = io('https://e-commerce-api-eekt.onrender.com');
 // console.log(socket)
@@ -22,8 +24,10 @@ export default function Dashboard() {
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalProductSold, setTotalProductSold] = useState(0);
-  const [notifications, setNotification] = useState([])
-  let navigate = useNavigate()
+  const [notifications, setNotification] = useState([]);
+  const [openCityDialog, setOpenCityDialog] = useState(false);
+  const [cityPrice, setCityPrice] = useState([])
+  let navigate = useNavigate();
 
   // useEffect(() => {
   //   // Listen for "notification" event from Socket.IO server
@@ -31,7 +35,7 @@ export default function Dashboard() {
   //     console.log(data)
   //     setNotification(data);
   //   });
-  
+
   //   // Clean up event listener on component unmount
   //   return () => {
   //     socket.off("notification");
@@ -48,13 +52,23 @@ export default function Dashboard() {
       .catch((error) => {
         console.error("Error fetching orders:", error);
       });
-      axios
+    axios
+      .get(`${import.meta.env.VITE_BASE_URL}pricelist/`)
+      .then((response) => {
+        if (response.data) {
+         setCityPrice(response.data.prices);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching orders:", error);
+      });
+    axios
       .get(`${import.meta.env.VITE_BASE_URL}notification/`)
       .then((response) => {
         if (response.data) {
-          console.log(response.data)
+          console.log(response.data);
           setNotification(response.data);
-              }
+        }
       })
       .catch((error) => {
         console.error("Error fetching orders:", error);
@@ -91,7 +105,8 @@ export default function Dashboard() {
         console.error("Error fetching orders:", error);
       });
   }, []);
-
+  const handleOpenCityDialog = () =>
+    setOpenCityDialog((prevState) => !prevState);
   const cardDetails = [
     {
       bgColor: "lightGreen",
@@ -125,7 +140,8 @@ export default function Dashboard() {
 
   return (
     <DefaultLayout>
-      <div className="px-6 pt-6 font-medium  my-2">
+      <AddCityDialog open={openCityDialog} handleOpen={handleOpenCityDialog} />
+      <div className="px-3 pt-6 font-medium  my-2">
         <div className="grid grid-cols-4 gap-4">
           {cardDetails.map((items, index) => (
             <div
@@ -148,7 +164,7 @@ export default function Dashboard() {
         <div className="capitalize pt-8 font-workSans pb-1 text-lg">
           Analytics
         </div>
-        <div className="w-full flex jusstify-between">
+        <div className="w-full flex gap-5 justify-between">
           <div className="w-[70%]">
             <Analytics />
           </div>
@@ -157,34 +173,69 @@ export default function Dashboard() {
               <Button className="bg-mainGreen">Notifications</Button>
             </Badge>
             <Card className="w-full  mt-9 overflow-y-auto h-[20rem] rounded-md">
-            
               <List className="my-2 p-0">
-              {notifications?.slice()
-              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))?.map((item, index) => (
-              <div key={index}>
-              <ListItem onClick={() => navigate(`/order/${item.orderId}`)} className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white">
-                  
-                  <ListItemPrefix>
-                    <div className=" uppercase w-[2.5rem] h-[2.5rem] text-white rounded-full bg-mainGreen inline-flex justify-center items-center ">
-                      PF
-                    </div>
-                  </ListItemPrefix>
+                {notifications
+                  ?.slice()
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                  ?.map((item, index) => (
+                    <div key={index}>
+                      <ListItem
+                        onClick={() => navigate(`/order/${item.orderId}`)}
+                        className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white"
+                      >
+                        <ListItemPrefix>
+                          <div className=" uppercase w-[2.5rem] h-[2.5rem] text-white rounded-full bg-mainGreen inline-flex justify-center items-center ">
+                            PF
+                          </div>
+                        </ListItemPrefix>
 
-                  <div className="font-workSans text-md text-mainGreen hover:text-black">
-                    {item.full_name}
-                    <div className="text-sm text-gray-500">{item.message}</div>
-                  </div>
-                
-                </ListItem>
-                </div>
-            ))}
-               
+                        <div className="font-workSans text-md text-mainGreen hover:text-black">
+                          {item.full_name}
+                          <div className="text-sm text-gray-500">
+                            {item.message}
+                          </div>
+                        </div>
+                      </ListItem>
+                    </div>
+                  ))}
               </List>
             </Card>
           </div>
         </div>
-        <div className="mt-10">
-          <OrderTable />
+        <div  className="w-full flex gap-5 mt-10 justify-between">
+          <div className="w-[75%]">
+            <OrderTable />
+          </div>
+          <div className="w-[30%]">
+            <Badge content={cityPrice.length}>
+              <Button className="bg-mainGreen" onClick={handleOpenCityDialog}>Add City</Button>
+            </Badge>
+            <Card className="w-full  mt-9 overflow-y-auto p-4 h-[20rem] rounded-md">
+              <List className="my-2 p-0">
+                {cityPrice
+                  ?.slice()
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                  ?.map((item, index) => (
+                    <div key={index}>
+                      <ListItem
+                        className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white"
+                      >
+                        <ListItemPrefix>
+                          <div className=" ">
+                            {item.city}
+                          </div>
+                        </ListItemPrefix>
+                        <ListItemSuffix>
+                        <div className="font-workSans text-md text-mainGreen hover:text-black">
+                          {item.estimatePrice}
+                        </div>
+                        </ListItemSuffix>
+                      </ListItem>
+                    </div>
+                  ))}
+              </List>
+            </Card>
+          </div>
         </div>
       </div>
     </DefaultLayout>
