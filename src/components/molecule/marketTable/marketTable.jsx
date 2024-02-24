@@ -180,7 +180,7 @@ export function MarketTable() {
                       </Tooltip>
                     </td>
                     <td className={classes}>
-                      <ul className="list-disc list-inside">
+                      <ul className="list-disc-none list-inside">
                         {market.openingHours.map((hour, index) => (
                           <Tooltip
                             key={index}
