@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { TruncateString } from "../lib/util/truncateString";
+import AddCommasToNumber from "../lib/util/addComma";
 
 const Loader = () => {
   return <div>loading</div>;
@@ -258,7 +259,7 @@ export default function OrderDetails() {
                               color="blue-gray"
                               className="font-normal"
                             >
-                              &#8358;{product_id?.product_price}
+                              &#8358;{AddCommasToNumber(product_id?.product_price)}
                             </Typography>
                           </td>
 
@@ -303,12 +304,12 @@ export default function OrderDetails() {
                   </div>
                   <div className="text-black text-xl font-medium font-workSans">
                     &#8358;
-                    {orderDetails?.products?.reduce(
+                    {AddCommasToNumber(orderDetails?.products?.reduce(
                       (total, item) =>
                         total +
                         item.product_id.product_price * item.product_quatity,
                       0
-                    )}
+                    ))}
                   </div>
                 </div>
                 <div className="flex gap-9 border-b border-[#7E7E7E] pb-2">
@@ -316,7 +317,7 @@ export default function OrderDetails() {
                     Delivery Charges:
                   </div>
                   <div className="text-black text-xl font-medium font-workSans">
-                    &#8358;{deliveryCharges}
+                    &#8358;{AddCommasToNumber(deliveryCharges)}
                   </div>
                 </div>
                 <div className="flex gap-9">
@@ -325,7 +326,7 @@ export default function OrderDetails() {
                   </div>
                   <div className="text-black text-xl font-medium font-workSans">
                     &#8358;
-                    {orderDetails?.amount_paid}
+                    {AddCommasToNumber(orderDetails?.amount_paid)}
                   </div>
                 </div>
               </div>

@@ -52,13 +52,13 @@ export function Sidebar() {
           <ListItemPrefix>
             <MapIcon className="h-5 w-5" />
           </ListItemPrefix>
-          markets
+          Markets
         </ListItem>
         <ListItem onClick={() => navigate("/distributors")}  className=" text-white ">
           <ListItemPrefix>
             <UserGroupIcon className="h-5 w-5" />
           </ListItemPrefix>
-          distributors
+          Distributors
         </ListItem>
       </List>
     </div>

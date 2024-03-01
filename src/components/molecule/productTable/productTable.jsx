@@ -22,6 +22,7 @@ import { UpdateProductForm } from "../dialogs/updateProductDialog";
 import { TruncateString } from "../../../lib/util/truncateString";
 import { useEffect } from "react";
 import axios from "axios";
+import AddCommasToNumber from "../../../lib/util/addComma";
 const Loader = () => {
   return <div>loading...</div>
 }
@@ -195,7 +196,7 @@ export function ProductTable() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        &#8358;{product_price}
+                        &#8358;{AddCommasToNumber(product_price)}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -204,7 +205,7 @@ export function ProductTable() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        &#8358;{product_cost_price}
+                        &#8358;{AddCommasToNumber(product_cost_price)}
                       </Typography>
                     </td>
                     <td className={classes}>

@@ -61,12 +61,20 @@ export function AddDistributorsDialog({ handleOpen, open }) {
   }, []);
   const handleChange = (e) => {
     const { name, value } = e.target;
-
+    let newValue = value;
+    
+    // Prevent negative values
+    if (name === 'contact') {
+      newValue = Math.max(0, parseInt(value));
+    }
+  
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [name]: value,
+      [name]: newValue,
     }));
   };
+  
+  
   const handleSelectLga = (newOption) => {
     setSelectedLga(newOption);
   };
@@ -134,11 +142,11 @@ export function AddDistributorsDialog({ handleOpen, open }) {
 
             <div className="w-full flex gap-3 flex-col">
               <div className="text-[#7B7B7B] font-workSans font-semibold">
-                <label htmlFor="lga">city*:</label>
+                <label htmlFor="lga">City*:</label>
               </div>
               <Select
                 size="lg"
-                label="Select city"
+                label="Select City"
                 value={selectedLga}
                 onChange={handleSelectLga}
               >
@@ -155,7 +163,7 @@ export function AddDistributorsDialog({ handleOpen, open }) {
               </div>
               <Select
                 size="lg"
-                label="Select city"
+                label="Select Market"
                 value={selectedMarket}
                 onChange={handleMarket}
               >
