@@ -189,7 +189,7 @@ export function CustomerTable() {
                           <Typography
                             variant="small"
                             color="blue-gray"
-                            className="font-normal"
+                            className="font-normal capitalize"
                           >
                             {first_name} {last_name}
                           </Typography>

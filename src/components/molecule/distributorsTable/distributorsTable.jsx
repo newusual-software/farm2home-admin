@@ -132,7 +132,7 @@ export function DistributorsTable() {
                           <Typography
                             variant="small"
                             color="blue-gray"
-                            className="font-bold"
+                            className="font-bold capitalize"
                           >
                             {TruncateString({ str: distributor.name, num: 25 })}
                           </Typography>

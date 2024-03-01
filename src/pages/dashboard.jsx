@@ -16,7 +16,7 @@ import { OrderTable } from "../components/molecule/orderTable/orderTable";
 // import io from 'socket.io-client';
 import { useNavigate } from "react-router-dom";
 import { AddCityDialog } from "../components/molecule/dialogs/addCityDialog";
-
+import AddCommasToNumber from "../lib/util/addComma";
 // const socket = io('https://e-commerce-api-eekt.onrender.com');
 // console.log(socket)
 export default function Dashboard() {
@@ -156,7 +156,8 @@ export default function Dashboard() {
               </div>
               <div className="text-2xl font-semibold pb-1">
                 {items.title === "total revenue" ? "₦" : ""}
-                {items.value}
+                {AddCommasToNumber(items.value)}
+              
               </div>
             </div>
           ))}
@@ -202,15 +203,15 @@ export default function Dashboard() {
             </Card>
           </div>
         </div>
-        <div  className="w-full flex gap-5 mt-10 justify-between">
-          <div className="w-[75%]">
+        <div  className="w-max flex  mt-10 justify-between">
+          <div className="w-[75%] ">
             <OrderTable />
           </div>
-          <div className="w-[30%]">
+          <div className="w-[28%]">
             <Badge content={cityPrice.length}>
               <Button className="bg-mainGreen" onClick={handleOpenCityDialog}>Add City</Button>
             </Badge>
-            <Card className="w-full  mt-9 overflow-y-auto p-4 h-[20rem] rounded-md">
+            <Card className="w-[95%]  mt-9 overflow-y-auto p-4 h-[20rem] rounded-md">
               <List className="my-2 p-0">
                 {cityPrice
                   ?.slice()
@@ -218,7 +219,7 @@ export default function Dashboard() {
                   ?.map((item, index) => (
                     <div key={index}>
                       <ListItem
-                        className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white"
+                        className="group  rounded-md py-1.5 px-1 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white"
                       >
                         <ListItemPrefix>
                         

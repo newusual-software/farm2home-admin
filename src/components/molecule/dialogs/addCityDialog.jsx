@@ -70,7 +70,7 @@ export function AddCityDialog({ handleOpen, open }) {
               <div className="w-full">
                 <Typography variant="h6">City</Typography>
                 <Input
-                  label="city"
+                  label="City"
                   size="lg"
                   name="city"
                   value={formData.city}

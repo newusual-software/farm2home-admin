@@ -132,11 +132,11 @@ export function AddMarketDialog({ handleOpen, open }) {
 
             <div className="w-full flex gap-3 flex-col">
               <div className="text-[#7B7B7B] font-workSans font-semibold">
-                <label htmlFor="lga">city*:</label>
+              <Typography variant="h6">City</Typography>
               </div>
               <Select
                 size="lg"
-                label="Select city"
+                label="Select City"
                 value={selectedLga}
                 onChange={handleSelectLga}
               >

@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { useUpdateStatusMutation } from "../../../services/api";
+import AddCommasToNumber from "../../../lib/util/addComma";
 const TABLE_HEAD = [
   "Name",
   "Order Id",
@@ -106,7 +107,7 @@ export function OrderTable() {
   };
   //   console.log(selectedStatus)
   return (
-    <Card className="h-full w-[96%] mx-auto">
+    <Card className="h-full w-[95%] mx-auto">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div>Order History</div>
@@ -119,7 +120,7 @@ export function OrderTable() {
         </div>
       </CardHeader>
       <CardBody className=" px-0">
-        <table className="w-full min-w-max table-auto text-left">
+        <table className="w-full min-w-[40%] table-auto text-left">
           <thead>
             <tr>
               {TABLE_HEAD.map((head) => (
@@ -224,7 +225,7 @@ export function OrderTable() {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          &#8358;{amount_paid}
+                          &#8358;{AddCommasToNumber(amount_paid)}
                         </Typography>
                       </td>
 
