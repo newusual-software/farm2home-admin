@@ -55,10 +55,21 @@ export function AddProductForm({ handleOpen, open }) {
         altImages: altImagesCopy,
       }));
     } else {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        [name]: value,
-      }));
+      // If the changed field is the cost price, update the selling price as well
+      if (name === "productCostPrice") {
+        const costPrice = parseFloat(value);
+        const sellingPrice = costPrice * 1.15;
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [name]: value,
+          productAmount: sellingPrice.toFixed(2), // Round to 2 decimal places
+        }));
+      } else {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [name]: value,
+        }));
+      }
     }
   };
 
@@ -95,7 +106,10 @@ export function AddProductForm({ handleOpen, open }) {
 
         // The response will contain the URL of the uploaded main image
         const mainImageUrl = mainImageResponse.data.secure_url;
-
+        // Calculate the cost price
+        const costPrice = parseFloat(formData.productCostPrice);
+        // Calculate the selling price by adding 15% to the cost price
+        const sellingPrice = costPrice * 1.15;
         if (mainImageUrl) {
           // Upload alt images to Cloudinary
           const altImageUrls = await Promise.all(
@@ -116,8 +130,8 @@ export function AddProductForm({ handleOpen, open }) {
             product_sub_sub_cat: selectedSubSubcategory,
             alt_image: altImageUrls, // Use alt_images instead of alt_image
             product_des: content,
-            product_price: parseFloat(formData.productAmount),
-            product_cost_price: parseFloat(formData.productCostPrice),
+            product_price: parseInt(sellingPrice),
+            product_cost_price: costPrice,
             product_rate: 5,
           };
 
@@ -173,16 +187,17 @@ export function AddProductForm({ handleOpen, open }) {
             </div>
 
             <div className="-mb-2 flex gap-3 w-full">
+              
               <div className="w-1/3">
-                <Typography variant="h6">Product Amount</Typography>
+                <Typography variant="h6">Product cost price</Typography>
                 <div className="relative">
                   <Input
                     type="number"
                     size="lg"
                     className="py-[.65rem] px-4 ps-9 pe-16 block w-ful border-gray-400 border shadow-sm rounded-lg text-sm "
                     placeholder="0.00"
-                    name="productAmount"
-                    value={formData.productAmount}
+                    name="productCostPrice"
+                    value={formData.productCostPrice}
                     onChange={handleChange}
                   />
                   <div className="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4">
@@ -194,15 +209,15 @@ export function AddProductForm({ handleOpen, open }) {
                 </div>
               </div>
               <div className="w-1/3">
-                <Typography variant="h6">Product cost price</Typography>
+                <Typography variant="h6">Product Amount</Typography>
                 <div className="relative">
                   <Input
                     type="number"
                     size="lg"
                     className="py-[.65rem] px-4 ps-9 pe-16 block w-ful border-gray-400 border shadow-sm rounded-lg text-sm "
                     placeholder="0.00"
-                    name="productCostPrice"
-                    value={formData.productCostPrice}
+                    name="productAmount"
+                    value={formData.productAmount}
                     onChange={handleChange}
                   />
                   <div className="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4">

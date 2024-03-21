@@ -24,7 +24,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import AddCommasToNumber from "../../../lib/util/addComma";
 const Loader = () => {
-  return <div>loading...</div>
+  return <tr><td>loading...</td></tr>
 }
 const TABLE_HEAD = [
   "Name",
@@ -133,10 +133,11 @@ export function ProductTable() {
               ))}
             </tr>
           </thead>
-          {loading && <Loader/>}
+
 
           <tbody>
-            {product?.map(
+          
+            {!loading && product ? ( product?.map(
               (
                 {
                   _id,
@@ -168,6 +169,7 @@ export function ProductTable() {
                     key={index}
                     className="cursor-pointer hover:bg-greenWhite hover"
                   >
+
                     <td
                       className={classes}
                       onClick={() => navigate(`/product/${_id}`)}
@@ -257,7 +259,7 @@ export function ProductTable() {
                   </tr>
                 );
               }
-            )}
+            )) : <Loader/>}
           </tbody>
         </table>
       </CardBody>

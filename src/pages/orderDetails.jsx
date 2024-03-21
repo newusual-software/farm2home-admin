@@ -38,6 +38,7 @@ export default function OrderDetails() {
         setLoading(false);
       });
   }, [id]);
+  
   const dateObject = new Date(orderDetails?.createdAt);
 
   // Format the date as YYYY-MM-DD
@@ -178,11 +179,18 @@ export default function OrderDetails() {
                     {orderDetails?.address?.directions}
                   </span>
                 </div>
-                <div className="text-black font-medium text-lg ">
-                  Nearest Markets:{" "}
-                  <span className="inline-flex flex-col text-gray-600">
-                    {orderDetails?.markets?.map((market) => (
-                      <div key={market.id}>{market.name}</div>
+                <div className="text-black flex gap-2 font-medium text-lg ">
+                Nearest Markets:
+                  <span className=" text-gray-600">
+                    {orderDetails?.markets?.map((market, index) => (
+                      <div key={index}>
+                        {market.distributors.length >= 1 && (
+                          <>
+                           {market.distributors}{" "}
+                            {/* Accessing the _id property of the first distributor */}
+                          </>
+                        )}
+                      </div>
                     ))}
                   </span>
                 </div>
@@ -259,7 +267,8 @@ export default function OrderDetails() {
                               color="blue-gray"
                               className="font-normal"
                             >
-                              &#8358;{AddCommasToNumber(product_id?.product_price)}
+                              &#8358;
+                              {AddCommasToNumber(product_id?.product_price)}
                             </Typography>
                           </td>
 
@@ -304,12 +313,14 @@ export default function OrderDetails() {
                   </div>
                   <div className="text-black text-xl font-medium font-workSans">
                     &#8358;
-                    {AddCommasToNumber(orderDetails?.products?.reduce(
-                      (total, item) =>
-                        total +
-                        item.product_id.product_price * item.product_quatity,
-                      0
-                    ))}
+                    {AddCommasToNumber(
+                      orderDetails?.products?.reduce(
+                        (total, item) =>
+                          total +
+                          item.product_id.product_price * item.product_quatity,
+                        0
+                      )
+                    )}
                   </div>
                 </div>
                 <div className="flex gap-9 border-b border-[#7E7E7E] pb-2">

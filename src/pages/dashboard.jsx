@@ -26,7 +26,7 @@ export default function Dashboard() {
   const [totalProductSold, setTotalProductSold] = useState(0);
   const [notifications, setNotification] = useState([]);
   const [openCityDialog, setOpenCityDialog] = useState(false);
-  const [cityPrice, setCityPrice] = useState([])
+  const [cityPrice, setCityPrice] = useState([]);
   let navigate = useNavigate();
 
   // useEffect(() => {
@@ -56,7 +56,7 @@ export default function Dashboard() {
       .get(`${import.meta.env.VITE_BASE_URL}pricelist/`)
       .then((response) => {
         if (response.data) {
-         setCityPrice(response.data.prices);
+          setCityPrice(response.data.prices);
         }
       })
       .catch((error) => {
@@ -137,7 +137,30 @@ export default function Dashboard() {
       value: totalProductSold,
     },
   ];
-
+  function timeSince(timestamp) {
+    let time = Date.parse(timestamp);
+    let now = Date.now();
+    let secondsPast = (now - time) / 1000;
+    let suffix = 'ago';
+  
+    let intervals = {
+        year: 31536000,
+        month: 2592000,
+        weeks: 604800,
+        day: 86400,
+        hour: 3600,
+        minute: 60,
+        second: 1
+    };
+  
+    for (let i in intervals) {
+          let interval = intervals[i];
+          if (secondsPast >= interval) {
+              let count = Math.floor(secondsPast / interval);
+              return `${count} ${i} ${suffix}`;
+          }
+      }
+  }
   return (
     <DefaultLayout>
       <AddCityDialog open={openCityDialog} handleOpen={handleOpenCityDialog} />
@@ -157,7 +180,6 @@ export default function Dashboard() {
               <div className="text-2xl font-semibold pb-1">
                 {items.title === "total revenue" ? "₦" : ""}
                 {AddCommasToNumber(items.value)}
-              
               </div>
             </div>
           ))}
@@ -178,38 +200,56 @@ export default function Dashboard() {
                 {notifications
                   ?.slice()
                   .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                  ?.map((item, index) => (
-                    <div key={index}>
-                      <ListItem
-                        onClick={() => navigate(`/order/${item.orderId}`)}
-                        className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white"
-                      >
-                        <ListItemPrefix>
-                          <div className=" uppercase w-[2.5rem] h-[2.5rem] text-white rounded-full bg-mainGreen inline-flex justify-center items-center ">
-                            PF
-                          </div>
-                        </ListItemPrefix>
+                  ?.map((item, index) => {
+                    const dateObject = new Date(item?.createdAt);
 
-                        <div className="font-workSans text-md text-mainGreen hover:text-black">
-                          {item.full_name}
-                          <div className="text-sm text-gray-500">
-                            {item.message}
+                    // Format the date as YYYY-MM-DD
+                    const formattedDate = dateObject.toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      }
+                    );
+                    return (
+                      <div key={index}>
+                        <ListItem
+                          onClick={() => navigate(`/order/${item.orderId}`)}
+                          className="group  rounded-md py-1.5 px-3 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white"
+                        >
+                          <ListItemPrefix>
+                            <div className=" uppercase w-[2.5rem] h-[2.5rem] text-white rounded-full bg-mainGreen inline-flex justify-center items-center ">
+                              PF
+                            </div>
+                          </ListItemPrefix>
+
+                          <div className="font-workSans text-md text-mainGreen hover:text-black">
+                            {item.full_name}
+                            <div className="text-sm text-gray-500">
+                              {item.message}
+                            </div>
+                            <div className="">
+                            {timeSince(item.createdAt)} . <span className="text-black">{formattedDate} </span> 
+                            </div>
                           </div>
-                        </div>
-                      </ListItem>
-                    </div>
-                  ))}
+                        </ListItem>
+                      </div>
+                    );
+                  })}
               </List>
             </Card>
           </div>
         </div>
-        <div  className="w-max flex  mt-10 justify-between">
+        <div className="w-max flex  mt-10 justify-between">
           <div className="w-[75%] ">
             <OrderTable />
           </div>
           <div className="w-[28%]">
             <Badge content={cityPrice.length}>
-              <Button className="bg-mainGreen" onClick={handleOpenCityDialog}>Add City</Button>
+              <Button className="bg-mainGreen" onClick={handleOpenCityDialog}>
+                Add City
+              </Button>
             </Badge>
             <Card className="w-[95%]  mt-9 overflow-y-auto p-4 h-[20rem] rounded-md">
               <List className="my-2 p-0">
@@ -218,19 +258,14 @@ export default function Dashboard() {
                   .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                   ?.map((item, index) => (
                     <div key={index}>
-                      <ListItem
-                        className="group  rounded-md py-1.5 px-1 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white"
-                      >
+                      <ListItem className="group  rounded-md py-1.5 px-1 text-sm font-normal text-green-gray-700 hover:bg-green-500 hover:text-white focus:bg-green-500 focus:text-white">
                         <ListItemPrefix>
-                        
-                          <div className=" ">
-                            {item.city}
-                          </div>
+                          <div className=" ">{item.city}</div>
                         </ListItemPrefix>
                         <ListItemSuffix>
-                        <div className="font-workSans text-md text-mainGreen hover:text-black">
-                          {item.estimatePrice}
-                        </div>
+                          <div className="font-workSans text-md text-mainGreen hover:text-black">
+                            {item.estimatePrice}
+                          </div>
                         </ListItemSuffix>
                       </ListItem>
                     </div>
